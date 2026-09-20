@@ -1,4 +1,9 @@
 ﻿//src/features/settings/constants/settings-defaults.ts
+import type { VaultConfig } from "@/shared/types/vault.types";
 
-export {};
-
+export const DEFAULT_SETTINGS: VaultConfig = {
+  lock_timeout_minutes: 1,
+  theme: "light",
+  accent: "violet",
+  navigation_mode: "dock-only",
+};

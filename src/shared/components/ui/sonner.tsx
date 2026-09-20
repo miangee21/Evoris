@@ -1,8 +1,6 @@
 //src/shared/components/ui/sonner.tsx
-"use client";
-
-import { useTheme } from "next-themes";
 import { Toaster as Sonner, type ToasterProps } from "sonner";
+import { useSessionStore } from "@/features/vault-session/store/session.store";
 import {
   CircleCheckIcon,
   InfoIcon,
@@ -11,12 +9,16 @@ import {
   Loader2Icon,
 } from "lucide-react";
 
-const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = "system" } = useTheme();
+const Toaster = ({
+  theme: propTheme,
+  ...props
+}: ToasterProps): React.JSX.Element => {
+  const storeTheme = useSessionStore((s) => s.settings.theme);
+  const finalTheme = propTheme || storeTheme;
 
   return (
     <Sonner
-      theme={theme as ToasterProps["theme"]}
+      theme={finalTheme as "light" | "dark" | "system"}
       className="toaster group"
       icons={{
         success: <CircleCheckIcon className="size-4" />,

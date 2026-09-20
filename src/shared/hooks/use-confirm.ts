@@ -1,53 +1,41 @@
 ﻿//src/shared/hooks/use-confirm.ts
-import { useState, useCallback } from "react";
+import { create } from "zustand";
 
-export interface ConfirmState {
+export interface ConfirmDialogState {
   readonly isOpen: boolean;
   readonly title: string;
   readonly description: string;
+  readonly confirmLabel: string;
+  readonly cancelLabel: string;
+  readonly variant: "default" | "destructive";
+  readonly onConfirm?: (() => void | Promise<void>) | undefined;
 }
 
-export interface UseConfirmReturn {
-  readonly confirmState: ConfirmState;
-  readonly confirm: (title: string, description: string) => Promise<boolean>;
-  readonly handleConfirm: () => void;
-  readonly handleCancel: () => void;
+export interface ConfirmDialogActions {
+  readonly openConfirm: (options: Omit<ConfirmDialogState, "isOpen">) => void;
+  readonly closeConfirm: () => void;
 }
 
-export function useConfirm(): UseConfirmReturn {
-  const [confirmState, setConfirmState] = useState<ConfirmState>({
-    isOpen: false,
-    title: "",
-    description: "",
-  });
+export type ConfirmDialogStore = ConfirmDialogState & ConfirmDialogActions;
 
-  const [resolveFn, setResolveFn] = useState<((value: boolean) => void) | null>(
-    null,
-  );
+export const useConfirmStore = create<ConfirmDialogStore>((set) => ({
+  isOpen: false,
+  title: "",
+  description: "",
+  confirmLabel: "Confirm",
+  cancelLabel: "Cancel",
+  variant: "default",
+  onConfirm: undefined,
+  openConfirm: (options): void => {
+    set({ ...options, isOpen: true });
+  },
+  closeConfirm: (): void => {
+    set({ isOpen: false });
+  },
+}));
 
-  const confirm = useCallback(
-    (title: string, description: string): Promise<boolean> => {
-      return new Promise((resolve) => {
-        setConfirmState({ isOpen: true, title, description });
-        setResolveFn(() => resolve);
-      });
-    },
-    [],
-  );
-
-  const handleConfirm = useCallback((): void => {
-    if (resolveFn) {
-      resolveFn(true);
-    }
-    setConfirmState((prev) => ({ ...prev, isOpen: false }));
-  }, [resolveFn]);
-
-  const handleCancel = useCallback((): void => {
-    if (resolveFn) {
-      resolveFn(false);
-    }
-    setConfirmState((prev) => ({ ...prev, isOpen: false }));
-  }, [resolveFn]);
-
-  return { confirmState, confirm, handleConfirm, handleCancel };
+export function useConfirm(): (
+  options: Omit<ConfirmDialogState, "isOpen">,
+) => void {
+  return useConfirmStore((state) => state.openConfirm);
 }
