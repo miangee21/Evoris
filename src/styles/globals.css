@@ -121,6 +121,12 @@
   --z-modal: 100;
   --z-toast: 150;
   --z-splash: 200;
+
+  /* Pullcord Overrides */
+  --pullcord-top: 0px;
+  --pullcord-right: 7rem;
+  --pullcord-z: 190; /* Right below splash but above everything else */
+  --pullcord-ink: var(--border); /* Matches your theme dynamically */
 }
 
 /* Part 2.4: Dark Theme Values */

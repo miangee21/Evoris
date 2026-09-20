@@ -3,20 +3,19 @@ import { createHashRouter, Outlet } from "react-router-dom";
 import { ROUTE_PATHS } from "./route-paths";
 import { RequireLocked } from "./guards/require-locked";
 import { RequireUnlocked } from "./guards/require-unlocked";
+import { StandaloneLayout } from "../layouts/standalone-layout";
+import { SplashScreen } from "@/features/splash/components/splash-screen";
+import { HomeScreen } from "@/features/home/components/home-screen";
 
 export const router = createHashRouter([
   {
     element: <RequireLocked />,
     children: [
       {
-        element: (
-          <div id="standalone-layout">
-            <Outlet />
-          </div>
-        ),
+        element: <StandaloneLayout />,
         children: [
-          { path: ROUTE_PATHS.SPLASH, element: <div>Splash Screen</div> },
-          { path: ROUTE_PATHS.HOME, element: <div>Home Screen</div> },
+          { path: ROUTE_PATHS.SPLASH, element: <SplashScreen /> },
+          { path: ROUTE_PATHS.HOME, element: <HomeScreen /> },
           { path: ROUTE_PATHS.UNLOCK, element: <div>Unlock Screen</div> },
         ],
       },
