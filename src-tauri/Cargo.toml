@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Evoris — a fully offline, encrypted, open-source password manager."
 authors = ["Muhammad Hassan"]
 license = "MIT"
-repository = "https://github.com/miangee21/evoris"
+repository = "https://github.com/miangee21/Evoris"
 edition = "2021"
 
 [lib]

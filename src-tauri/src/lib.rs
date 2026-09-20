@@ -1,6 +1,12 @@
 #![deny(unsafe_code)]
 #![warn(clippy::all, clippy::pedantic)]
 
+pub mod crypto;
+
+/// Initializes and runs the Tauri application.
+///
+/// # Panics
+/// Panics if the Tauri application fails to build or run due to missing OS resources or bad configuration.
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
