@@ -2,6 +2,8 @@
 #![warn(clippy::all, clippy::pedantic)]
 
 pub mod crypto;
+pub mod error;
+pub mod vault;
 
 /// Initializes and runs the Tauri application.
 ///
