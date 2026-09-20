@@ -31,10 +31,12 @@ pub fn validate_vault(data: &VaultData) -> Result<(), VaultError> {
         if !item_ids.insert(&item.id) {
             return Err(VaultError::CorruptedVault("Duplicate item ID".into()));
         }
-        if !cat_ids.contains(&item.category_id) {
-            return Err(VaultError::CorruptedVault(
-                "Item references non-existent category".into(),
-            ));
+        if let Some(cat_id) = &item.category_id {
+            if !cat_ids.contains(cat_id) {
+                return Err(VaultError::CorruptedVault(
+                    "Item references non-existent category".into(),
+                ));
+            }
         }
 
         let mut field_ids = HashSet::new();

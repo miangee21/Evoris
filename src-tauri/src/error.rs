@@ -7,6 +7,8 @@ use thiserror::Error;
 pub enum VaultError {
     #[error("File is not a valid Evoris vault")]
     NotAnEvorisFile,
+    #[error("Vault is locked")]
+    VaultLocked,
     #[error("Unsupported vault version")]
     UnsupportedVaultVersion,
     #[error("Vault file is corrupted or tampered: {0}")]
@@ -33,6 +35,7 @@ impl Serialize for VaultError {
         let code = match self {
             VaultError::NotAnEvorisFile => "NOT_AN_EVORIS_FILE",
             VaultError::UnsupportedVaultVersion => "UNSUPPORTED_VERSION",
+            VaultError::VaultLocked => "VAULT_LOCKED",
             VaultError::CorruptedVault(_) => "CORRUPTED_VAULT",
             VaultError::InvalidMasterPassword
             | VaultError::CryptoError(CryptoError::DecryptionFailed) => "INVALID_MASTER_PASSWORD",

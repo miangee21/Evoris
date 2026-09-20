@@ -38,7 +38,7 @@ pub struct VaultCategory {
 #[serde(deny_unknown_fields)]
 pub struct VaultItem {
     pub id: String,
-    pub category_id: String,
+    pub category_id: Option<String>,
     pub name: String,
     pub fields: Vec<VaultField>,
     pub created_at: u64,

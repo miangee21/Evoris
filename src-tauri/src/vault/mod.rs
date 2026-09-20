@@ -173,7 +173,7 @@ mod tests {
         };
         data.items.push(VaultItem {
             id: "item1".into(),
-            category_id: "missing_cat".into(), // Points to non-existent category
+            category_id: Some("missing_cat".into()), // Points to non-existent category
             name: "Test".into(),
             fields: vec![],
             created_at: 0,
