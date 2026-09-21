@@ -13,6 +13,8 @@ export interface Field {
   readonly type: FieldType;
   readonly label: string;
   readonly value: string;
+  readonly masked: boolean;
+  readonly order: number;
 }
 
 export interface Category {
@@ -20,17 +22,22 @@ export interface Category {
   readonly name: string;
   readonly icon: string;
   readonly color: string;
-  readonly created_at: number;
-  readonly updated_at: number;
+  readonly created_at: string;
+  readonly updated_at: string;
+}
+
+export interface TotpConfig {
+  readonly secret: string;
 }
 
 export interface Item {
   readonly id: string;
-  readonly category_id: string;
+  readonly category_id: string | null;
   readonly name: string;
   readonly fields: readonly Field[];
-  readonly created_at: number;
-  readonly updated_at: number;
+  readonly totp: TotpConfig | null;
+  readonly created_at: string;
+  readonly updated_at: string;
   readonly is_favorite: boolean;
   readonly in_trash: boolean;
 }
@@ -43,8 +50,12 @@ export interface VaultConfig {
 }
 
 export interface VaultData {
+  readonly version: number;
+  readonly settings: VaultConfig;
   readonly categories: readonly Category[];
   readonly items: readonly Item[];
+  readonly created_at: string;
+  readonly updated_at: string;
 }
 
 export interface VaultState {

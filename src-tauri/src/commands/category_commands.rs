@@ -22,8 +22,8 @@ pub fn create_category(
     let path_guard = state.active_path.lock().unwrap();
     let path = path_guard.as_ref().ok_or(VaultError::VaultLocked)?;
 
-    category.created_at = now();
-    category.updated_at = category.created_at;
+    category.created_at = now().to_string();
+    category.updated_at.clone_from(&category.created_at);
 
     // Mutate in-memory
     session.data.categories.push(category.clone());
@@ -54,7 +54,7 @@ pub fn update_category(
     let path_guard = state.active_path.lock().unwrap();
     let path = path_guard.as_ref().ok_or(VaultError::VaultLocked)?;
 
-    category.updated_at = now();
+    category.updated_at = now().to_string();
 
     let cat_index = session
         .data
@@ -105,7 +105,7 @@ pub fn delete_category(state: State<'_, AppState>, id: String) -> Result<(), Vau
         if item.category_id.as_ref() == Some(&id) {
             affected_items.push((item.id.clone(), item.category_id.clone()));
             item.category_id = None;
-            item.updated_at = now();
+            item.updated_at = now().to_string();
         }
     }
 

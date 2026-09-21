@@ -41,17 +41,24 @@ export async function invokeCommand<TResult>(
     const parsed = resultSchema.safeParse(response);
 
     if (!parsed.success) {
+      console.error(`[Zod Validation Error in ${command}]`, parsed.error);
       return err("CORRUPTED_VAULT");
     }
 
     return ok(parsed.data);
   } catch (error) {
+    // Tauri often throws direct strings for Rust enum errors
+    if (typeof error === "string") {
+      return err(error as EvorisError);
+    }
+    // Fallback if the error was serialized as an object
     if (error !== null && typeof error === "object" && "code" in error) {
-      const typedError = error as { code: EvorisError };
+      const typedError = error as { code: string };
       if (typeof typedError.code === "string") {
-        return err(typedError.code);
+        return err(typedError.code as EvorisError);
       }
     }
+    console.error(`[Invoke Error in ${command}]`, error);
     return err("UNKNOWN");
   }
 }

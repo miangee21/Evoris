@@ -141,6 +141,7 @@
   --muted-foreground: oklch(0.6 0.01 270);
   --border: oklch(0.3 0.01 270); /* Low-contrast dark */
   --input: oklch(0.3 0.01 270);
+  --warning-foreground: var(--foreground);
 }
 
 /* Part 2.5: The six accent palettes (Light & Dark) */
@@ -586,4 +587,17 @@
   .ease-spring {
     transition-timing-function: var(--ease-spring);
   }
+}
+
+/* Hide native password reveal icons (Edge/IE) since we use a custom RevealToggle */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+/* Some Chromium versions with OS-level credential features */
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-strong-password-auto-fill-button {
+  visibility: hidden;
+  display: none !important;
 }

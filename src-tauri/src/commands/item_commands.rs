@@ -29,8 +29,8 @@ pub fn create_item(
     let path_guard = state.active_path.lock().unwrap();
     let path = path_guard.as_ref().ok_or(VaultError::VaultLocked)?;
 
-    item.created_at = now();
-    item.updated_at = item.created_at;
+    item.created_at = now().to_string();
+    item.updated_at.clone_from(&item.created_at);
     item.in_trash = false;
 
     session.data.items.push(item.clone());
@@ -59,7 +59,7 @@ pub fn update_item(
     let path_guard = state.active_path.lock().unwrap();
     let path = path_guard.as_ref().ok_or(VaultError::VaultLocked)?;
 
-    item.updated_at = now();
+    item.updated_at = now().to_string();
 
     let item_index = session
         .data
@@ -100,11 +100,11 @@ pub fn delete_item(state: State<'_, AppState>, id: String) -> Result<(), VaultEr
         .ok_or_else(|| VaultError::CorruptedVault("Item not found".into()))?;
 
     let backup_trash_state = session.data.items[item_index].in_trash;
-    let backup_updated_at = session.data.items[item_index].updated_at;
+    let backup_updated_at = session.data.items[item_index].updated_at.clone();
 
     // Move to trash (Soft Delete)
     session.data.items[item_index].in_trash = true;
-    session.data.items[item_index].updated_at = now();
+    session.data.items[item_index].updated_at = now().to_string();
 
     let save_result = (|| -> Result<(), VaultError> {
         crate::vault::validate::validate_vault(&session.data)?;

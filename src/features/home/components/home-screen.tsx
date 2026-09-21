@@ -5,9 +5,11 @@ import { FolderIcon, PlusIcon, DownloadIcon } from "lucide-react";
 import { Logo } from "@/shared/components/logo";
 import { APP_NAME } from "@/shared/constants/app.constants";
 import { HomeActionCard } from "./home-action-card";
+import { CreateVaultDialog } from "./create-vault-dialog";
 
 export function HomeScreen(): React.JSX.Element {
   const [version, setVersion] = useState<string>("...");
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -65,7 +67,7 @@ export function HomeScreen(): React.JSX.Element {
             title="Create a Vault"
             description="Setup a new secure vault with a master password."
             onClick={(): void => {
-              console.warn("TODO: Create Vault - Next Step");
+              setIsCreateOpen(true);
             }}
           />
           <HomeActionCard
@@ -85,6 +87,13 @@ export function HomeScreen(): React.JSX.Element {
           {version} • MIT Open Source
         </p>
       </div>
+
+      <CreateVaultDialog
+        isOpen={isCreateOpen}
+        onClose={() => {
+          setIsCreateOpen(false);
+        }}
+      />
     </div>
   );
 }

@@ -72,9 +72,20 @@ pub fn create_vault(
     path: &Path,
     password: &str,
 ) -> Result<(VaultData, kdf::DerivedKey, [u8; 16]), VaultError> {
+    // Initial dummy date, will be upgraded globally in commands
+    let initial_time = String::from("1970-01-01T00:00:00Z");
     let data = VaultData {
+        version: u32::from(format::FORMAT_VERSION),
+        settings: model::VaultConfig {
+            lock_timeout_minutes: 1,
+            theme: String::from("light"),
+            accent: String::from("violet"),
+            navigation_mode: String::from("dock-only"),
+        },
         categories: vec![],
         items: vec![],
+        created_at: initial_time.clone(),
+        updated_at: initial_time,
     };
     let salt = random::generate_salt()?;
     let key = kdf::derive_key(password, &salt)?;
@@ -168,16 +179,26 @@ mod tests {
     #[test]
     fn test_missing_category_validation() {
         let mut data = VaultData {
+            version: u32::from(format::FORMAT_VERSION),
+            settings: model::VaultConfig {
+                lock_timeout_minutes: 1,
+                theme: "light".to_string(),
+                accent: "rose".to_string(),
+                navigation_mode: "dock-only".to_string(),
+            },
             categories: vec![],
             items: vec![],
+            created_at: "1970-01-01T00:00:00Z".to_string(),
+            updated_at: "1970-01-01T00:00:00Z".to_string(),
         };
         data.items.push(VaultItem {
             id: "item1".into(),
             category_id: Some("missing_cat".into()), // Points to non-existent category
             name: "Test".into(),
             fields: vec![],
-            created_at: 0,
-            updated_at: 0,
+            totp: None,
+            created_at: "1970-01-01T00:00:00Z".to_string(),
+            updated_at: "1970-01-01T00:00:00Z".to_string(),
             is_favorite: false,
             in_trash: false,
         });

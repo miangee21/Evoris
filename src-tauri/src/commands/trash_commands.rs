@@ -33,7 +33,7 @@ pub fn restore_item(state: State<'_, AppState>, id: String) -> Result<(), VaultE
         .ok_or_else(|| VaultError::CorruptedVault("Item not found".into()))?;
 
     session.data.items[item_index].in_trash = false;
-    session.data.items[item_index].updated_at = now();
+    session.data.items[item_index].updated_at = now().to_string();
 
     if let Err(e) = crate::vault::save_vault(path, &session.data, &session.key, &session.salt) {
         session.data.items[item_index].in_trash = true; // Rollback
