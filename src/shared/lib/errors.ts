@@ -23,37 +23,99 @@ export type EvorisError =
   | "VAULT_LOCKED"
   | "UNKNOWN";
 
-const ERROR_MESSAGES: Record<EvorisError, string> = {
-  INVALID_MASTER_PASSWORD: "The master password is incorrect.",
-  FILE_NOT_FOUND: "The vault file could not be found.",
-  FILE_READ_FAILED: "Failed to read the vault file from disk.",
-  FILE_WRITE_FAILED: "Failed to write the vault file to disk.",
-  DECRYPTION_FAILED: "Failed to decrypt the vault. The file may be damaged.",
-  ENCRYPTION_FAILED: "Failed to encrypt the vault data.",
-  INVALID_IMPORT_FORMAT: "This file is not a valid Evoris export.",
-  ITEM_NOT_FOUND: "The requested item was not found.",
-  CATEGORY_NOT_FOUND: "The requested category was not found.",
-  INVALID_TOTP_SECRET: "The provided TOTP secret is invalid.",
+interface ErrorDetail {
+  readonly title: string;
+  readonly description: string;
+}
+
+const ERROR_MESSAGES: Record<EvorisError, ErrorDetail> = {
+  INVALID_MASTER_PASSWORD: {
+    title: "Access Denied",
+    description: "The master password is incorrect. Please try again.",
+  },
+  FILE_NOT_FOUND: {
+    title: "File Not Found",
+    description: "The vault file could not be located.",
+  },
+  FILE_READ_FAILED: {
+    title: "Read Error",
+    description: "Failed to read the vault file from disk.",
+  },
+  FILE_WRITE_FAILED: {
+    title: "Write Error",
+    description: "Failed to write the vault file to disk.",
+  },
+  DECRYPTION_FAILED: {
+    title: "Decryption Failed",
+    description: "Failed to decrypt the vault. The file may be damaged.",
+  },
+  ENCRYPTION_FAILED: {
+    title: "Encryption Failed",
+    description: "Failed to securely encrypt the vault data.",
+  },
+  INVALID_IMPORT_FORMAT: {
+    title: "Invalid Format",
+    description: "This file is not a valid Evoris export.",
+  },
+  ITEM_NOT_FOUND: {
+    title: "Item Missing",
+    description: "The requested item was not found in the vault.",
+  },
+  CATEGORY_NOT_FOUND: {
+    title: "Category Missing",
+    description: "The requested category was not found.",
+  },
+  INVALID_TOTP_SECRET: {
+    title: "Invalid TOTP",
+    description: "The provided TOTP secret is invalid.",
+  },
   // Rust mapping
-  IO_ERROR: "Failed to read or write the vault file on disk.",
-  CRYPTO_ERROR: "Incorrect master password or corrupted file encryption.",
-  PARSE_ERROR: "Failed to parse the vault data structure.",
-  UNSUPPORTED_VERSION: "This vault was created with a newer version of Evoris.",
-  NOT_AN_EVORIS_FILE: "This file is not a valid Evoris vault.",
-  CORRUPTED_VAULT: "The vault data is corrupted and cannot be read.",
-  VAULT_LOCKED: "The vault is currently locked.",
-  UNKNOWN: "An unknown error occurred.",
+  IO_ERROR: {
+    title: "Storage Error",
+    description: "Failed to read or write the vault file on disk.",
+  },
+  CRYPTO_ERROR: {
+    title: "Cryptographic Error",
+    description: "Incorrect master password or corrupted file encryption.",
+  },
+  PARSE_ERROR: {
+    title: "Data Error",
+    description: "Failed to parse the vault data structure.",
+  },
+  UNSUPPORTED_VERSION: {
+    title: "Unsupported Version",
+    description: "This vault was created with a newer version of Evoris.",
+  },
+  NOT_AN_EVORIS_FILE: {
+    title: "Invalid File",
+    description: "This file is not a valid Evoris vault.",
+  },
+  CORRUPTED_VAULT: {
+    title: "Vault Corrupted",
+    description: "The vault data is corrupted and cannot be read.",
+  },
+  VAULT_LOCKED: {
+    title: "Vault Locked",
+    description: "The vault is currently locked. Please unlock it first.",
+  },
+  UNKNOWN: {
+    title: "Unexpected Error",
+    description: "An unknown error occurred. Please try again.",
+  },
 };
 
-export function getErrorMessage(error: string): string {
+export function getErrorDetail(error: string): ErrorDetail {
   if (error in ERROR_MESSAGES) {
     return ERROR_MESSAGES[error as EvorisError];
   }
   return ERROR_MESSAGES.UNKNOWN;
 }
 
-export function notifyError(error: string): void {
-  toast.error(getErrorMessage(error));
+export function notifyError(error: string, customTitle?: string): void {
+  const detail = getErrorDetail(error);
+  toast.error(customTitle ?? detail.title, {
+    description: detail.description,
+  });
 }
 
 export function notifySuccess(title: string, description?: string): void {

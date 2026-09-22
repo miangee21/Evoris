@@ -16,7 +16,6 @@ import {
 } from "../schemas/create-vault.schema";
 import { createVaultCmd } from "@/features/vault-session/api/vault.commands";
 import { useSessionStore } from "@/features/vault-session/store/session.store";
-import { DEFAULT_SETTINGS } from "@/features/settings/constants/settings-defaults";
 import { ROUTE_PATHS } from "@/app/router/route-paths";
 import { notifyError, notifySuccess } from "@/shared/lib/errors";
 import type { BlobMood } from "./use-blob-companion";
@@ -82,7 +81,7 @@ export function useCreateVault({
           data.vaultName,
           [...result.value.items],
           [...result.value.categories],
-          DEFAULT_SETTINGS,
+          result.value.settings,
         );
         notifySuccess(
           "Vault Created",

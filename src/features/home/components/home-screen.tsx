@@ -3,13 +3,42 @@ import { useState, useEffect } from "react";
 import { getVersion } from "@tauri-apps/api/app";
 import { FolderIcon, PlusIcon, DownloadIcon } from "lucide-react";
 import { Logo } from "@/shared/components/logo";
-import { APP_NAME } from "@/shared/constants/app.constants";
+import { open } from "@tauri-apps/plugin-dialog";
+import { documentDir } from "@tauri-apps/api/path";
+import {
+  APP_NAME,
+  VAULT_FILE_EXTENSION,
+} from "@/shared/constants/app.constants";
 import { HomeActionCard } from "./home-action-card";
 import { CreateVaultDialog } from "./create-vault-dialog";
+import { OpenVaultDialog } from "./open-vault-dialog";
 
 export function HomeScreen(): React.JSX.Element {
   const [version, setVersion] = useState<string>("...");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isOpenDialogOpen, setIsOpenDialogOpen] = useState(false);
+  const [selectedVaultPath, setSelectedVaultPath] = useState<string | null>(
+    null,
+  );
+
+  const handleOpenVaultClick = async (): Promise<void> => {
+    try {
+      const docsPath = await documentDir();
+      const selected = await open({
+        multiple: false,
+        defaultPath: docsPath,
+        filters: [{ name: "Evoris Vault", extensions: [VAULT_FILE_EXTENSION] }],
+      });
+
+      // If user selected a file (didn't cancel)
+      if (selected && typeof selected === "string") {
+        setSelectedVaultPath(selected);
+        setIsOpenDialogOpen(true);
+      }
+    } catch (err) {
+      console.error("Failed to open file dialog:", err);
+    }
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -58,8 +87,8 @@ export function HomeScreen(): React.JSX.Element {
             icon={<FolderIcon className="size-6" />}
             title="Open a Vault"
             description="Unlock an existing vault from your local storage."
-            onClick={(): void => {
-              console.warn("TODO: Open Vault - Next Step");
+            onClick={() => {
+              void handleOpenVaultClick();
             }}
           />
           <HomeActionCard
@@ -93,6 +122,14 @@ export function HomeScreen(): React.JSX.Element {
         onClose={() => {
           setIsCreateOpen(false);
         }}
+      />
+      <OpenVaultDialog
+        isOpen={isOpenDialogOpen}
+        onClose={() => {
+          setIsOpenDialogOpen(false);
+          setSelectedVaultPath(null);
+        }}
+        selectedPath={selectedVaultPath}
       />
     </div>
   );

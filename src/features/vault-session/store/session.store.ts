@@ -10,7 +10,7 @@ const initialState = {
   items: [],
   categories: [],
   trash: [],
-  settings: DEFAULT_SETTINGS, // Will be replaced by real settings in Phase 3
+  settings: DEFAULT_SETTINGS,
 };
 
 export const useSessionStore = create<SessionStore>((set) => ({
