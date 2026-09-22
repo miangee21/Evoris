@@ -15,6 +15,7 @@ import { useBlobCompanion } from "../hooks/use-blob-companion";
 import { useCreateVault } from "../hooks/use-create-vault";
 import { VaultMascotPanel } from "./vault-mascot-panel";
 import { PasswordGeneratorModal } from "@/features/password-generator/components/password-generator-modal";
+import { VAULT_NAME_MAX_LENGTH } from "@/shared/constants/limits";
 
 interface CreateVaultDialogProps {
   readonly isOpen: boolean;
@@ -140,7 +141,7 @@ export function CreateVaultDialog({
                     }}
                     className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     placeholder="e.g. MyPasswords"
-                    maxLength={15}
+                    maxLength={VAULT_NAME_MAX_LENGTH}
                   />
                   {errors.vaultName && (
                     <p className="text-xs text-destructive">

@@ -81,8 +81,3 @@ export const vaultDataSchema = z
       }
     });
   });
-
-export const vaultStateSchema = z.object({
-  is_locked: z.boolean(),
-  has_vault: z.boolean(),
-});

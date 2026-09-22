@@ -1,7 +1,7 @@
 ﻿//src/features/clipboard/hooks/use-copy-to-clipboard.ts
 import { useState, useCallback } from "react";
 import { copyToClipboard, clearClipboard } from "../lib/clipboard";
-import { CLIPBOARD_CLEAR_MS } from "../constants/clipboard-config";
+import { CLIPBOARD_CLEAR_MS } from "@/shared/constants/limits";
 import { notifySuccess, notifyError } from "@/shared/lib/errors";
 
 // Global timer reference so it persists even if components unmount,

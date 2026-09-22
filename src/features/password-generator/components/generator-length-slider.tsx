@@ -1,4 +1,9 @@
 //src/features/password-generator/components/generator-length-slider.tsx
+import {
+  GENERATOR_MIN_LENGTH,
+  GENERATOR_MAX_LENGTH,
+} from "@/shared/constants/limits";
+
 interface GeneratorLengthSliderProps {
   readonly length: number;
   readonly onChange: (length: number) => void;
@@ -18,8 +23,8 @@ export function GeneratorLengthSlider({
       </div>
       <input
         type="range"
-        min={8}
-        max={64}
+        min={GENERATOR_MIN_LENGTH}
+        max={GENERATOR_MAX_LENGTH}
         value={length}
         onChange={(e) => {
           onChange(Number(e.target.value));

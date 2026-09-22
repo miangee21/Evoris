@@ -15,6 +15,7 @@ import type { PasswordGeneratorOptions } from "../types/generator.types";
 import { GeneratorPreview } from "./generator-preview";
 import { GeneratorLengthSlider } from "./generator-length-slider";
 import { GeneratorToggles } from "./generator-toggles";
+import { GENERATOR_DEFAULT_LENGTH } from "@/shared/constants/limits";
 
 interface PasswordGeneratorModalProps {
   readonly isOpen: boolean;
@@ -23,7 +24,7 @@ interface PasswordGeneratorModalProps {
 }
 
 const DEFAULT_OPTIONS: PasswordGeneratorOptions = {
-  length: 20,
+  length: GENERATOR_DEFAULT_LENGTH,
   uppercase: true,
   lowercase: true,
   numbers: true,

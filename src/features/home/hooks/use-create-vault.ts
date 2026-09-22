@@ -20,6 +20,7 @@ import { DEFAULT_SETTINGS } from "@/features/settings/constants/settings-default
 import { ROUTE_PATHS } from "@/app/router/route-paths";
 import { notifyError, notifySuccess } from "@/shared/lib/errors";
 import type { BlobMood } from "./use-blob-companion";
+import { VAULT_FILE_EXTENSION } from "@/shared/constants/app.constants";
 
 export interface UseCreateVaultOptions {
   readonly setBlobMood: (mood: BlobMood) => void;
@@ -62,8 +63,8 @@ export function useCreateVault({
       const docsPath = await documentDir();
 
       const selectedPath = await save({
-        defaultPath: `${docsPath}/${data.vaultName}.evs`,
-        filters: [{ name: "Evoris Vault", extensions: ["evs"] }],
+        defaultPath: `${docsPath}/${data.vaultName}.${VAULT_FILE_EXTENSION}`,
+        filters: [{ name: "Evoris Vault", extensions: [VAULT_FILE_EXTENSION] }],
       });
 
       if (!selectedPath) {

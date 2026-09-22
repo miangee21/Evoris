@@ -57,8 +57,3 @@ export interface VaultData {
   readonly created_at: string;
   readonly updated_at: string;
 }
-
-export interface VaultState {
-  readonly is_locked: boolean;
-  readonly has_vault: boolean;
-}
