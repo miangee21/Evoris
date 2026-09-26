@@ -1,7 +1,7 @@
 //src/features/home/components/home-screen.tsx
 import { useState, useEffect } from "react";
 import { getVersion } from "@tauri-apps/api/app";
-import { FolderIcon, PlusIcon, DownloadIcon } from "lucide-react";
+import { FolderIcon, PlusIcon, DownloadIcon, SettingsIcon } from "lucide-react";
 import { Logo } from "@/shared/components/logo";
 import { open } from "@tauri-apps/plugin-dialog";
 import { documentDir } from "@tauri-apps/api/path";
@@ -10,6 +10,7 @@ import {
   VAULT_FILE_EXTENSION,
 } from "@/shared/constants/app.constants";
 import { HomeActionCard } from "./home-action-card";
+import { HomeSettingsDialog } from "./home-settings-dialog";
 import { CreateVaultDialog } from "./create-vault-dialog";
 import { OpenVaultDialog } from "./open-vault-dialog";
 
@@ -20,6 +21,7 @@ export function HomeScreen(): React.JSX.Element {
   const [selectedVaultPath, setSelectedVaultPath] = useState<string | null>(
     null,
   );
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const handleOpenVaultClick = async (): Promise<void> => {
     try {
@@ -58,6 +60,20 @@ export function HomeScreen(): React.JSX.Element {
 
   return (
     <div className="relative flex h-screen w-full flex-col items-center overflow-hidden bg-background p-8">
+      {/* Top Right Settings Button */}
+      <div className="absolute right-6 top-6 z-50">
+        <button
+          type="button"
+          onClick={(): void => {
+            setIsSettingsOpen(true);
+          }}
+          className="flex size-10 items-center justify-center rounded-full border border-border/50 bg-background/50 text-muted-foreground backdrop-blur-sm transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          aria-label="Open App Settings"
+        >
+          <SettingsIcon className="size-5" />
+        </button>
+      </div>
+
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-0 bg-accent-base opacity-30 transition-opacity duration-normal dark:opacity-[0.06] mask-[url('/home-doodle.svg')] mask-center mask-no-repeat mask-cover [-webkit-mask-image:url('/home-doodle.svg')] [-webkit-mask-position:center] [-webkit-mask-repeat:no-repeat] [-webkit-mask-size:cover]"
@@ -130,6 +146,12 @@ export function HomeScreen(): React.JSX.Element {
           setSelectedVaultPath(null);
         }}
         selectedPath={selectedVaultPath}
+      />
+      <HomeSettingsDialog
+        isOpen={isSettingsOpen}
+        onClose={(): void => {
+          setIsSettingsOpen(false);
+        }}
       />
     </div>
   );

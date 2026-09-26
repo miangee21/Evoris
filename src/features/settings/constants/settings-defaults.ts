@@ -3,7 +3,5 @@ import type { VaultConfig } from "@/shared/types/vault.types";
 
 export const DEFAULT_SETTINGS: VaultConfig = {
   lock_timeout_minutes: 1,
-  theme: "light",
-  accent: "violet",
-  navigation_mode: "dock-only",
+  navigation_mode: "top-bar-only",
 };

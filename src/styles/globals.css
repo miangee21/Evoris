@@ -8,7 +8,8 @@
 @custom-variant dark (&:is(.dark *));
 
 /* Part 2.3: Light Theme Semantic Tokens */
-:root {
+:root,
+.light {
   /* Surface & text */
   --background: oklch(1 0 0); /* Pure white */
   --foreground: oklch(0.2 0.02 270); /* Very dark neutral */
@@ -600,4 +601,32 @@ input[type="password"]::-webkit-credentials-auto-fill-button,
 input[type="password"]::-webkit-strong-password-auto-fill-button {
   visibility: hidden;
   display: none !important;
+}
+
+/* Accent Selector Swatches */
+@layer utilities {
+  .swatch-violet {
+    background-color: oklch(0.6 0.2 290);
+    color: oklch(1 0 0);
+  }
+  .swatch-blue {
+    background-color: oklch(0.6 0.2 240);
+    color: oklch(1 0 0);
+  }
+  .swatch-emerald {
+    background-color: oklch(0.6 0.2 150);
+    color: oklch(1 0 0);
+  }
+  .swatch-amber {
+    background-color: oklch(0.6 0.2 70);
+    color: oklch(0.2 0.02 270);
+  }
+  .swatch-rose {
+    background-color: oklch(0.6 0.2 10);
+    color: oklch(1 0 0);
+  }
+  .swatch-cyan {
+    background-color: oklch(0.6 0.2 210);
+    color: oklch(0.2 0.02 270);
+  }
 }

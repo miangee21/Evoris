@@ -60,8 +60,6 @@ pub struct VaultItem {
 #[serde(deny_unknown_fields)]
 pub struct VaultConfig {
     pub lock_timeout_minutes: u32,
-    pub theme: String,
-    pub accent: String,
     pub navigation_mode: String,
 }
 

@@ -51,8 +51,6 @@ export const itemSchema = z.object({
 
 export const vaultConfigSchema = z.object({
   lock_timeout_minutes: z.number().min(0),
-  theme: z.enum(["light", "dark", "system"]),
-  accent: z.enum(["violet", "blue", "emerald", "amber", "rose", "cyan"]),
   navigation_mode: z.enum(["both", "top-bar-only", "dock-only"]),
 });
 

@@ -63,7 +63,7 @@ export function OpenVaultDialog({
 
       <Dialog open={isOpen} onOpenChange={handleClose} disablePointerDismissal>
         <DialogContent
-          initialFocus={false} // Prevent auto-focus so Mascot doesn't instantly side-eye
+          initialFocus={false}
           className="w-[min(90vw,52rem)] p-0 sm:max-w-none max-h-[calc(100vh-3rem)] overflow-y-auto"
         >
           <div className="grid grid-cols-[200px_1fr] sm:grid-cols-[260px_1fr]">
@@ -73,7 +73,7 @@ export function OpenVaultDialog({
               gaze={blobGaze}
               nod={blobNod}
               positionX={blobPositionX}
-              positionY={blobPositionY}
+              positionY={blobPositionY + 28}
               onWake={() => {
                 setBlobMood("surprised");
               }}
@@ -84,7 +84,7 @@ export function OpenVaultDialog({
                     ? "Oops, try again!"
                     : "Ready to unlock."
               }
-              captionHidden={false} // No Y-axis jumping needed for this simple form
+              captionHidden={false}
             />
 
             {/* Right Pane: Unlock Form */}
@@ -96,10 +96,7 @@ export function OpenVaultDialog({
                 </DialogTitle>
                 <DialogDescription className="text-sm mt-1">
                   Enter your master password to decrypt{" "}
-                  <span className="font-mono text-foreground font-medium">
-                    {filename}
-                  </span>
-                  .
+                  <span className="font-semibold text-primary">{filename}</span>
                 </DialogDescription>
               </DialogHeader>
 
@@ -113,15 +110,13 @@ export function OpenVaultDialog({
                   </label>
                   <PasswordInput
                     {...register("masterPassword")}
-                    // We purposefully omit showCopy and showGenerator here (defaults to false)
                     onFocus={() => {
                       setBlobMood("sideEye");
                       setBlobPositionX(-70);
-                      setBlobPositionY(0); // Input is higher up, so Y is 0
+                      setBlobPositionY(0);
                       setBlobGaze({ x: -18, y: -4, intensity: 1 });
                     }}
                     onBlur={() => {
-                      // Only reset to neutral if it didn't get set to 'sad' from an error
                       if (blobMood !== "sad") {
                         setBlobMood("neutral");
                         setBlobPositionX(0);
@@ -132,7 +127,6 @@ export function OpenVaultDialog({
                     }}
                     onChange={(e) => {
                       void register("masterPassword").onChange(e);
-                      // Reset from 'sad' back to typing mode when user tries again
                       if (e.target.value.length > 0) {
                         setBlobMood("password");
                         setBlobNod(true);
@@ -152,7 +146,7 @@ export function OpenVaultDialog({
                   )}
                 </div>
 
-                {/* Actions (Pushed to bottom, slightly raised) */}
+                {/* Actions */}
                 <div className="flex justify-end gap-3 pt-6 pb-2 mt-auto">
                   <button
                     type="button"

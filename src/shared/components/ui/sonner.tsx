@@ -1,6 +1,6 @@
 //src/shared/components/ui/sonner.tsx
 import { Toaster as Sonner, type ToasterProps } from "sonner";
-import { useSessionStore } from "@/features/vault-session/store/session.store";
+import { useThemeStore } from "@/features/theme/store/theme.store";
 import {
   CircleCheckIcon,
   InfoIcon,
@@ -13,7 +13,7 @@ const Toaster = ({
   theme: propTheme,
   ...props
 }: ToasterProps): React.JSX.Element => {
-  const storeTheme = useSessionStore((s) => s.settings.theme);
+  const storeTheme = useThemeStore((s) => s.theme);
   const finalTheme = propTheme || storeTheme;
 
   return (

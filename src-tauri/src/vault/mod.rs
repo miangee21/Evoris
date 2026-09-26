@@ -78,9 +78,7 @@ pub fn create_vault(
         version: u32::from(format::FORMAT_VERSION),
         settings: model::VaultConfig {
             lock_timeout_minutes: 1,
-            theme: String::from("light"),
-            accent: String::from("violet"),
-            navigation_mode: String::from("dock-only"),
+            navigation_mode: String::from("top-bar-only"),
         },
         categories: vec![],
         items: vec![],
@@ -182,9 +180,7 @@ mod tests {
             version: u32::from(format::FORMAT_VERSION),
             settings: model::VaultConfig {
                 lock_timeout_minutes: 1,
-                theme: "light".to_string(),
-                accent: "rose".to_string(),
-                navigation_mode: "dock-only".to_string(),
+                navigation_mode: "both".to_string(),
             },
             categories: vec![],
             items: vec![],

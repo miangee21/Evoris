@@ -44,8 +44,6 @@ export interface Item {
 
 export interface VaultConfig {
   readonly lock_timeout_minutes: number;
-  readonly theme: "light" | "dark" | "system";
-  readonly accent: "violet" | "blue" | "emerald" | "amber" | "rose" | "cyan";
   readonly navigation_mode: "both" | "top-bar-only" | "dock-only";
 }
 

@@ -4,7 +4,7 @@ import { z } from "zod";
 import { vaultDataSchema } from "@/shared/schemas/vault.schema";
 import type { Result } from "@/shared/lib/result";
 import type { EvorisError } from "@/shared/lib/errors";
-import type { VaultData } from "@/shared/types/vault.types";
+import type { VaultData, VaultConfig } from "@/shared/types/vault.types";
 
 const vaultStateResponseSchema = z.object({
   is_unlocked: z.boolean(),
@@ -46,4 +46,11 @@ export async function getVaultStateCmd(): Promise<
   Result<VaultStateResponse, EvorisError>
 > {
   return invokeCommand("get_vault_state", undefined, vaultStateResponseSchema);
+}
+
+// NEW: Command to save settings to Rust (.evs file)
+export async function updateSettingsCmd(
+  settings: VaultConfig,
+): Promise<Result<null, EvorisError>> {
+  return invokeCommand("update_settings", { settings }, z.null());
 }
