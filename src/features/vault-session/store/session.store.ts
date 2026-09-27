@@ -66,6 +66,10 @@ export const useSessionStore = create<SessionStore>((set) => ({
       items: state.items.map((item) =>
         item.category_id === id ? { ...item, category_id: null } : item,
       ),
+      //Nullify category inside trash as well
+      trash: state.trash.map((item) =>
+        item.category_id === id ? { ...item, category_id: null } : item,
+      ),
     }));
   },
 }));

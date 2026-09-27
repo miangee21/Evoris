@@ -1,28 +1,19 @@
 //src/features/settings/components/settings-page.tsx
 import { AppearanceSection } from "./appearance-section";
 import { NavigationSection } from "./navigation-section";
+import { PageContainer } from "@/shared/components/page-container";
+import { PageHeader } from "@/shared/components/page-header";
 
 export function SettingsPage(): React.JSX.Element {
   return (
-    <div className="w-full h-[calc(100vh-var(--topbar-height,56px))] overflow-y-auto animate-in fade-in duration-slow ease-out">
-      {/* Sticky Page Header Background  */}
-      <div className="sticky top-0 bg-background pt-6 sm:pt-10 px-6 sm:px-10 pb-4 z-10">
-        {/* Centered Text & Divider */}
-        <div className="mx-auto w-full max-w-4xl">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2">
-            Settings
-          </h1>
-          <p className="text-muted-foreground">
-            Manage your vault preferences and application appearance.
-          </p>
-          <div className="h-px w-full bg-border mt-5" />
-        </div>
-      </div>
+    <PageContainer>
+      <PageHeader
+        title="Settings"
+        description="Manage your vault preferences and application appearance."
+      />
 
-      {/* Content Container */}
-      <div className="w-full px-6 sm:px-10 pb-24">
-        {/* Centered Sections */}
-        <div className="mx-auto w-full max-w-4xl flex flex-col gap-5 pt-1">
+      <div className="w-full px-6 pb-24 sm:px-10">
+        <div className="mx-auto flex w-full max-w-4xl flex-col gap-5 pt-2">
           {/* Global Appearance Settings (localStorage) */}
           <AppearanceSection />
 
@@ -30,6 +21,6 @@ export function SettingsPage(): React.JSX.Element {
           <NavigationSection />
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 }

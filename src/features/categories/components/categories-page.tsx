@@ -14,8 +14,13 @@ import type { CategoryModalState } from "../types/category.types";
 import type React from "react";
 
 export function CategoriesPage(): React.JSX.Element {
-  const { categories, searchQuery, setSearchQuery, getItemCount } =
-    useCategories();
+  const {
+    categories,
+    searchQuery,
+    setSearchQuery,
+    getItemCount,
+    getTrashedItemCount,
+  } = useCategories();
   const { isProcessing, createCategory, updateCategory, deleteCategory } =
     useCategoryMutations();
   const openConfirm = useConfirmStore((state) => state.openConfirm);
@@ -43,11 +48,20 @@ export function CategoriesPage(): React.JSX.Element {
   };
 
   const handleDelete = (category: Category): void => {
-    const count = getItemCount(category.id);
-    const warningText =
-      count > 0
-        ? `This will also leave ${String(count)} ${count === 1 ? "item" : "items"} uncategorized.`
-        : "There are no items currently using this category.";
+    const activeCount = getItemCount(category.id);
+    const trashedCount = getTrashedItemCount(category.id);
+    const totalCount = activeCount + trashedCount;
+
+    let warningText = "There are no items currently using this category.";
+
+    if (totalCount > 0) {
+      const activeStr = activeCount > 0 ? `${String(activeCount)} active` : "";
+      const trashedStr =
+        trashedCount > 0 ? `${String(trashedCount)} in trash` : "";
+      const details = [activeStr, trashedStr].filter(Boolean).join(" and ");
+
+      warningText = `This will also leave ${String(totalCount)} ${totalCount === 1 ? "item" : "items"} (${details}) uncategorized.`;
+    }
 
     openConfirm({
       title: "Delete Category",

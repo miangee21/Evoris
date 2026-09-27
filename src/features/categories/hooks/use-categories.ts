@@ -11,11 +11,13 @@ export interface UseCategoriesResult {
   readonly searchQuery: string;
   readonly setSearchQuery: (query: string) => void;
   readonly getItemCount: (categoryId: string) => number;
+  readonly getTrashedItemCount: (categoryId: string) => number;
 }
 
 export function useCategories(): UseCategoriesResult {
   const categories = useSessionStore((state) => state.categories);
   const items = useSessionStore((state) => state.items);
+  const trash = useSessionStore((state) => state.trash);
   const [searchQuery, setSearchQuery] = useState("");
 
   // 300ms delay debounce for smooth typing performance
@@ -36,11 +38,17 @@ export function useCategories(): UseCategoriesResult {
     return items.filter((item) => item.category_id === categoryId).length;
   };
 
+  // Utility to get trashed item count for a specific category
+  const getTrashedItemCount = (categoryId: string): number => {
+    return trash.filter((item) => item.category_id === categoryId).length;
+  };
+
   return {
     categories: filteredAndSortedCategories,
     totalCategories: categories.length,
     searchQuery,
     setSearchQuery,
     getItemCount,
+    getTrashedItemCount,
   };
 }
