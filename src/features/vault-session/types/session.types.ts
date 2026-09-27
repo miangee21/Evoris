@@ -25,6 +25,10 @@ export interface SessionActions {
   ) => void;
   setLocked: () => void;
   setClosed: () => void;
+  // --- Category Mutators ---
+  addCategory: (category: VaultCategory) => void;
+  updateCategory: (category: VaultCategory) => void;
+  deleteCategory: (id: string) => void;
 }
 
 export type SessionStore = SessionState & SessionActions;

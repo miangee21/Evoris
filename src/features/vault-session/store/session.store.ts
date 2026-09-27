@@ -42,4 +42,30 @@ export const useSessionStore = create<SessionStore>((set) => ({
   setClosed: (): void => {
     set(initialState);
   },
+
+  // --- Category Mutators ---
+  addCategory: (category): void => {
+    set((state) => ({
+      categories: [...state.categories, category],
+    }));
+  },
+
+  updateCategory: (category): void => {
+    set((state) => ({
+      categories: state.categories.map((c) =>
+        c.id === category.id ? category : c,
+      ),
+    }));
+  },
+
+  deleteCategory: (id): void => {
+    set((state) => ({
+      // Remove category
+      categories: state.categories.filter((c) => c.id !== id),
+      // Frontend cascade nullify (matches Rust backend logic)
+      items: state.items.map((item) =>
+        item.category_id === id ? { ...item, category_id: null } : item,
+      ),
+    }));
+  },
 }));

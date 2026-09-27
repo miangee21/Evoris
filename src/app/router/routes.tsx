@@ -9,6 +9,7 @@ import { SplashScreen } from "@/features/splash/components/splash-screen";
 import { HomeScreen } from "@/features/home/components/home-screen";
 import { UnlockScreen } from "@/features/vault-session/components/unlock-screen";
 import { SettingsPage } from "@/features/settings/components/settings-page";
+import { CategoriesPage } from "@/features/categories/components/categories-page";
 
 export const router = createHashRouter([
   {
@@ -33,7 +34,7 @@ export const router = createHashRouter([
           { path: ROUTE_PATHS.VAULT, element: <div>Items List</div> },
           { path: ROUTE_PATHS.VAULT_NEW, element: <div>Create Item</div> },
           { path: ROUTE_PATHS.VAULT_DETAIL, element: <div>Item Detail</div> },
-          { path: ROUTE_PATHS.CATEGORIES, element: <div>Categories</div> },
+          { path: ROUTE_PATHS.CATEGORIES, element: <CategoriesPage /> },
           { path: ROUTE_PATHS.TRASH, element: <div>Trash</div> },
           { path: ROUTE_PATHS.SETTINGS, element: <SettingsPage /> },
         ],

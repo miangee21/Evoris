@@ -5,7 +5,7 @@ import { cn } from "@/shared/lib/utils";
 interface PageHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   readonly title: string;
   readonly description?: string;
-  readonly actions?: React.ReactNode; // Right side slot for buttons
+  readonly actions?: React.ReactNode;
 }
 
 export function PageHeader({
@@ -18,20 +18,27 @@ export function PageHeader({
   return (
     <div
       className={cn(
-        "mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between",
+        "sticky top-0 z-10 bg-background px-6 pb-4 pt-6 sm:px-10 sm:pt-10",
         className,
       )}
       {...props}
     >
-      <div className="space-y-1">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">
-          {title}
-        </h1>
-        {description && (
-          <p className="text-sm text-muted-foreground">{description}</p>
-        )}
+      <div className="mx-auto w-full max-w-4xl">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h1 className="mb-0 text-3xl font-bold tracking-tight text-foreground">
+              {title}
+            </h1>
+            {description && (
+              <p className="text-sm text-muted-foreground pb-0.5">
+                {description}
+              </p>
+            )}
+          </div>
+          {actions && <div className="flex items-center gap-2">{actions}</div>}
+        </div>
+        <div className="mt-1.5 h-px w-full bg-border" />
       </div>
-      {actions && <div className="flex items-center gap-2">{actions}</div>}
     </div>
   );
 }

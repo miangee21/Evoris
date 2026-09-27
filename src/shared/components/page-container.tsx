@@ -2,21 +2,17 @@
 import * as React from "react";
 import { cn } from "@/shared/lib/utils";
 
-interface PageContainerProps extends React.HTMLAttributes<HTMLDivElement> {
-  readonly hasDock?: boolean;
-}
+type PageContainerProps = React.HTMLAttributes<HTMLDivElement>;
 
 export function PageContainer({
   className,
-  hasDock,
   children,
   ...props
 }: PageContainerProps): React.JSX.Element {
   return (
     <div
       className={cn(
-        "mx-auto w-full max-w-(--page-max-width) px-(--page-padding-x) py-(--page-padding-y)",
-        hasDock && "pb-24",
+        "h-[calc(100vh-var(--topbar-height,56px))] w-full overflow-y-auto animate-in fade-in duration-slow ease-out",
         className,
       )}
       {...props}
