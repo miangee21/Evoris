@@ -16,7 +16,7 @@ export interface NavItem {
 
 export const NAV_ITEMS: NavItem[] = [
   {
-    name: "Items",
+    name: "Vault",
     path: ROUTE_PATHS.VAULT, // /vault
     icon: DatabaseIcon,
     isActive: (currentPath) =>

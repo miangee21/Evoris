@@ -10,6 +10,7 @@ import { HomeScreen } from "@/features/home/components/home-screen";
 import { UnlockScreen } from "@/features/vault-session/components/unlock-screen";
 import { SettingsPage } from "@/features/settings/components/settings-page";
 import { CategoriesPage } from "@/features/categories/components/categories-page";
+import { ItemsPage } from "@/features/items/components/items-page";
 
 export const router = createHashRouter([
   {
@@ -31,7 +32,7 @@ export const router = createHashRouter([
       {
         element: <VaultLayout />,
         children: [
-          { path: ROUTE_PATHS.VAULT, element: <div>Items List</div> },
+          { path: ROUTE_PATHS.VAULT, element: <ItemsPage /> },
           { path: ROUTE_PATHS.VAULT_NEW, element: <div>Create Item</div> },
           { path: ROUTE_PATHS.VAULT_DETAIL, element: <div>Item Detail</div> },
           { path: ROUTE_PATHS.CATEGORIES, element: <CategoriesPage /> },

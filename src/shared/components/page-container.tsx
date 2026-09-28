@@ -11,6 +11,7 @@ export function PageContainer({
 }: PageContainerProps): React.JSX.Element {
   return (
     <div
+      id="evoris-page-container"
       className={cn(
         "h-[calc(100vh-var(--topbar-height,56px))] w-full overflow-y-auto animate-in fade-in duration-slow ease-out",
         className,
