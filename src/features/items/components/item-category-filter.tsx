@@ -1,6 +1,6 @@
 //src/features/items/components/item-category-filter.tsx
 import * as React from "react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import {
   LayoutGridIcon,
   FolderXIcon,
@@ -37,6 +37,7 @@ export function ItemCategoryFilter({
 }: ItemCategoryFilterProps): React.JSX.Element {
   const categories = useSessionStore((state) => state.categories);
   const [searchQuery, setSearchQuery] = useState("");
+  const topRef = useRef<HTMLDivElement>(null);
 
   const selectedName = useMemo(() => {
     if (value === "all") return "All Categories";
@@ -53,8 +54,32 @@ export function ItemCategoryFilter({
         c.name.toLowerCase().includes(lowerQuery),
       );
     }
-    return sortByName(filtered, (c) => c.name);
-  }, [categories, searchQuery]);
+
+    const isCustomSelected = value !== "all" && value !== "uncategorized";
+
+    let selectedItem;
+    let otherItems = filtered;
+
+    if (isCustomSelected) {
+      selectedItem = categories.find((c) => c.id === value);
+      otherItems = filtered.filter((c) => c.id !== value);
+    }
+
+    const sortedOthers = sortByName(otherItems, (c) => c.name);
+
+    let finalArray = sortedOthers;
+    if (selectedItem) {
+      if (
+        searchQuery.trim().length === 0 ||
+        selectedItem.name.toLowerCase().includes(searchQuery.toLowerCase())
+      ) {
+        finalArray = [selectedItem, ...sortedOthers];
+      }
+    }
+
+    // Limit to 50 items strictly for DOM performance
+    return finalArray.slice(0, 50);
+  }, [categories, searchQuery, value]);
 
   return (
     <TooltipProvider delay={300}>
@@ -66,7 +91,20 @@ export function ItemCategoryFilter({
           }
         }}
         onOpenChange={(open): void => {
-          if (!open) setSearchQuery("");
+          if (!open) {
+            setSearchQuery("");
+          } else {
+            setTimeout(() => {
+              if (topRef.current) {
+                const scrollContainer = topRef.current.closest<HTMLElement>(
+                  '[data-slot="select-content"]',
+                );
+                if (scrollContainer) {
+                  scrollContainer.scrollTop = 0;
+                }
+              }
+            }, 10);
+          }
         }}
       >
         <Tooltip>
@@ -93,7 +131,10 @@ export function ItemCategoryFilter({
           className="flex max-h-75 w-37.5 flex-col sm:w-42.5"
         >
           {/* Internal Search Bar inside Dropdown */}
-          <div className="sticky top-0 z-10 mb-1 flex items-center border-b border-border bg-popover px-2 pb-2 pt-2">
+          <div
+            ref={topRef}
+            className="sticky top-0 z-10 mb-1 flex items-center border-b border-border bg-popover px-2 pb-2 pt-2"
+          >
             <SearchIcon className="mr-2 size-4 shrink-0 text-muted-foreground" />
             <input
               type="text"
