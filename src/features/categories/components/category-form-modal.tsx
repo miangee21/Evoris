@@ -46,7 +46,7 @@ export function CategoryFormModal({
     defaultValues: {
       name: "",
       icon: "folder",
-      color: "#8b5cf6",
+      color: "var(--category-default-color)",
     },
   });
 
@@ -56,7 +56,7 @@ export function CategoryFormModal({
       reset({
         name: state.defaultValues?.name ?? "",
         icon: state.defaultValues?.icon ?? "folder",
-        color: state.defaultValues?.color ?? "#8b5cf6",
+        color: state.defaultValues?.color ?? "var(--category-default-color)",
       });
     }
   }, [state.isOpen, state.defaultValues, reset]);
@@ -71,8 +71,8 @@ export function CategoryFormModal({
     name: previewName,
     icon: previewIcon,
     color: previewColor,
-    created_at: state.defaultValues?.created_at ?? new Date().toISOString(),
-    updated_at: new Date().toISOString(),
+    created_at: state.defaultValues?.created_at ?? "", // Rust sets timestamps (commands::now)
+    updated_at: "", // Rust sets timestamps (commands::now)
   };
 
   const handleFormSubmit = async (data: CategoryFormValues): Promise<void> => {
@@ -81,8 +81,8 @@ export function CategoryFormModal({
       name: data.name,
       icon: data.icon,
       color: data.color,
-      created_at: state.defaultValues?.created_at ?? new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      created_at: state.defaultValues?.created_at ?? "", // Rust sets timestamps (commands::now)
+      updated_at: "", // Rust sets timestamps (commands::now)
     };
 
     const success = await onSubmit(finalCategory);

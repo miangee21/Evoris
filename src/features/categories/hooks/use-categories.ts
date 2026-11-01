@@ -2,6 +2,7 @@
 import { useState, useMemo } from "react";
 import { useSessionStore } from "@/features/vault-session/store/session.store";
 import { useDebounce } from "@/shared/hooks/use-debounced-value";
+import { SEARCH_DEBOUNCE_MS } from "@/shared/constants/limits";
 import { sortByName } from "@/shared/lib/sort";
 import type { Category } from "@/shared/types/vault.types";
 
@@ -20,8 +21,8 @@ export function useCategories(): UseCategoriesResult {
   const trash = useSessionStore((state) => state.trash);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // 300ms delay debounce for smooth typing performance
-  const debouncedQuery = useDebounce(searchQuery, 300);
+  // Shared debounce constant
+  const debouncedQuery = useDebounce(searchQuery, SEARCH_DEBOUNCE_MS);
 
   const filteredAndSortedCategories = useMemo(() => {
     // 1. Filter using the debounced query

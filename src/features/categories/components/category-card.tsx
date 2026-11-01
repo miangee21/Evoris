@@ -1,6 +1,6 @@
 //src/features/categories/components/category-card.tsx
 import * as React from "react";
-import { CATEGORY_ICONS, FALLBACK_ICON } from "../constants/category-icons";
+import { categoryBadgeStyle, getCategoryIcon } from "../lib/category-display";
 import { cn } from "@/shared/lib/utils";
 import type { Category } from "@/shared/types/vault.types";
 
@@ -19,10 +19,8 @@ export function CategoryCard({
   onDelete,
   isPreview = false,
 }: CategoryCardProps): React.JSX.Element {
-  const IconComponent = CATEGORY_ICONS[category.icon] ?? FALLBACK_ICON;
-
-  const catColor = category.color || "var(--color-primary)";
-  const bgOpacity = `color-mix(in srgb, ${catColor} 12%, transparent)`;
+  const IconComponent = getCategoryIcon(category.icon);
+  const badgeStyle = categoryBadgeStyle(category.color);
 
   return (
     <div
@@ -35,7 +33,7 @@ export function CategoryCard({
       <div className="flex items-start justify-between">
         <div
           className="flex size-12 items-center justify-center rounded-2xl transition-colors"
-          style={{ backgroundColor: bgOpacity, color: catColor }}
+          style={badgeStyle}
         >
           <IconComponent className="size-6" />
         </div>
@@ -43,7 +41,7 @@ export function CategoryCard({
         <div className="flex items-center gap-2">
           <span
             className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
-            style={{ backgroundColor: bgOpacity, color: catColor }}
+            style={badgeStyle}
           >
             {itemCount} {itemCount === 1 ? "item" : "items"}
           </span>

@@ -7,7 +7,7 @@ use tauri::State;
 
 #[tauri::command]
 pub fn list_trash(state: State<'_, AppState>) -> Result<Vec<VaultItem>, VaultError> {
-    let session_guard = state.session.lock().unwrap();
+    let session_guard = crate::state::lock_guard(&state.session)?;
     let session = session_guard.as_ref().ok_or(VaultError::VaultLocked)?;
     Ok(session
         .data
@@ -19,10 +19,10 @@ pub fn list_trash(state: State<'_, AppState>) -> Result<Vec<VaultItem>, VaultErr
 }
 
 #[tauri::command]
-pub fn restore_item(state: State<'_, AppState>, id: String) -> Result<(), VaultError> {
-    let mut session_guard = state.session.lock().unwrap();
+pub fn restore_item(state: State<'_, AppState>, id: String) -> Result<VaultItem, VaultError> {
+    let mut session_guard = crate::state::lock_guard(&state.session)?;
     let session = session_guard.as_mut().ok_or(VaultError::VaultLocked)?;
-    let path_guard = state.active_path.lock().unwrap();
+    let path_guard = crate::state::lock_guard(&state.active_path)?;
     let path = path_guard.as_ref().ok_or(VaultError::VaultLocked)?;
 
     let item_index = session
@@ -32,21 +32,26 @@ pub fn restore_item(state: State<'_, AppState>, id: String) -> Result<(), VaultE
         .position(|i| i.id == id)
         .ok_or_else(|| VaultError::CorruptedVault("Item not found".into()))?;
 
+    // Fields, mask, order and TOTP are untouched: only the trash flags change.
+    // The item's category was already nullified at category-delete time if
+    // it was deleted while the item was in the trash, so no extra work here.
+    let backup = session.data.items[item_index].clone();
     session.data.items[item_index].in_trash = false;
+    session.data.items[item_index].deleted_at = None;
     session.data.items[item_index].updated_at = now().to_string();
 
     if let Err(e) = crate::vault::save_vault(path, &session.data, &session.key, &session.salt) {
-        session.data.items[item_index].in_trash = true; // Rollback
+        session.data.items[item_index] = backup; // Rollback
         return Err(e);
     }
-    Ok(())
+    Ok(session.data.items[item_index].clone())
 }
 
 #[tauri::command]
 pub fn delete_item_permanently(state: State<'_, AppState>, id: String) -> Result<(), VaultError> {
-    let mut session_guard = state.session.lock().unwrap();
+    let mut session_guard = crate::state::lock_guard(&state.session)?;
     let session = session_guard.as_mut().ok_or(VaultError::VaultLocked)?;
-    let path_guard = state.active_path.lock().unwrap();
+    let path_guard = crate::state::lock_guard(&state.active_path)?;
     let path = path_guard.as_ref().ok_or(VaultError::VaultLocked)?;
 
     let item_index = session
@@ -67,9 +72,9 @@ pub fn delete_item_permanently(state: State<'_, AppState>, id: String) -> Result
 
 #[tauri::command]
 pub fn empty_trash(state: State<'_, AppState>) -> Result<(), VaultError> {
-    let mut session_guard = state.session.lock().unwrap();
+    let mut session_guard = crate::state::lock_guard(&state.session)?;
     let session = session_guard.as_mut().ok_or(VaultError::VaultLocked)?;
-    let path_guard = state.active_path.lock().unwrap();
+    let path_guard = crate::state::lock_guard(&state.active_path)?;
     let path = path_guard.as_ref().ok_or(VaultError::VaultLocked)?;
 
     let backup_items = session.data.items.clone();

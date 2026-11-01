@@ -1,8 +1,10 @@
-﻿//src/shared/schemas/vault.schema.ts
+//src/shared/schemas/vault.schema.ts
 import { z } from "zod";
 import {
   CATEGORY_NAME_MAX_LENGTH,
   FIELD_LABEL_MAX_LENGTH,
+  ITEM_NAME_MIN_LENGTH,
+  ITEM_NAME_MAX_LENGTH,
 } from "../constants/limits";
 
 export const fieldTypeSchema = z.enum([
@@ -10,7 +12,6 @@ export const fieldTypeSchema = z.enum([
   "password",
   "email",
   "url",
-  "totp",
   "notes",
   "heading",
 ]);
@@ -21,7 +22,7 @@ export const fieldSchema = z.object({
   label: z.string().max(FIELD_LABEL_MAX_LENGTH),
   value: z.string(),
   masked: z.boolean(),
-  order: z.number(),
+  order: z.number().int().min(0),
 });
 
 export const categorySchema = z.object({
@@ -37,21 +38,34 @@ export const totpConfigSchema = z.object({
   secret: z.string(),
 });
 
+export const attachmentSchema = z.object({
+  id: z.string(),
+  file_name: z.string(),
+  mime_type: z.string(),
+  size_bytes: z.number().int().min(0),
+  data_base64: z.string(),
+  created_at: z.string(),
+});
+
 export const itemSchema = z.object({
   id: z.string(),
   category_id: z.string().nullable(),
-  name: z.string().min(1),
+  name: z.string().min(ITEM_NAME_MIN_LENGTH).max(ITEM_NAME_MAX_LENGTH),
   fields: z.array(fieldSchema),
   totp: totpConfigSchema.nullable(),
+  // Default so old stored items without the field still validate.
+  attachments: z.array(attachmentSchema).default([]),
   created_at: z.string(),
   updated_at: z.string(),
   is_favorite: z.boolean(),
   in_trash: z.boolean(),
+  deleted_at: z.string().nullable(),
 });
 
 export const vaultConfigSchema = z.object({
-  lock_timeout_minutes: z.number().min(0),
   navigation_mode: z.enum(["both", "top-bar-only", "dock-only"]),
+  auto_lock_enabled: z.boolean(),
+  lock_timeout_seconds: z.number().int().min(0),
 });
 
 export const vaultDataSchema = z

@@ -1,4 +1,4 @@
-﻿//src/features/vault-session/types/session.types.ts
+//src/features/vault-session/types/session.types.ts
 import type {
   Item as VaultItem,
   Category as VaultCategory,
@@ -11,7 +11,7 @@ export interface SessionState {
   vaultName: string | null;
   items: readonly VaultItem[];
   categories: readonly VaultCategory[];
-  trash: readonly VaultItem[]; // Using VaultItem since in_trash boolean handles the state
+  trash: readonly VaultItem[];
   settings: VaultSettings;
 }
 
@@ -29,6 +29,14 @@ export interface SessionActions {
   addCategory: (category: VaultCategory) => void;
   updateCategory: (category: VaultCategory) => void;
   deleteCategory: (id: string) => void;
+  // --- Item Mutators ---
+  addItem: (item: VaultItem) => void;
+  updateItem: (item: VaultItem) => void;
+  deleteItem: (id: string, deletedItem?: VaultItem) => void;
+  // --- Trash Mutators ---
+  restoreItem: (item: VaultItem) => void;
+  deleteItemPermanently: (id: string) => void;
+  emptyTrash: () => void;
 }
 
 export type SessionStore = SessionState & SessionActions;

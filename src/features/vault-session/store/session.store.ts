@@ -1,4 +1,4 @@
-﻿//src/features/vault-session/store/session.store.ts
+//src/features/vault-session/store/session.store.ts
 import { create } from "zustand";
 import type { SessionStore } from "../types/session.types";
 import { DEFAULT_SETTINGS } from "@/features/settings/constants/settings-defaults";
@@ -70,6 +70,53 @@ export const useSessionStore = create<SessionStore>((set) => ({
       trash: state.trash.map((item) =>
         item.category_id === id ? { ...item, category_id: null } : item,
       ),
+    }));
+  },
+
+  // --- Item Mutators ---
+  addItem: (item): void => {
+    set((state) => ({
+      items: [...state.items, item],
+    }));
+  },
+
+  updateItem: (item): void => {
+    set((state) => ({
+      items: state.items.map((i) => (i.id === item.id ? item : i)),
+      trash: state.trash.map((i) => (i.id === item.id ? item : i)),
+    }));
+  },
+
+  deleteItem: (id, deletedItem): void => {
+    set((state) => {
+      const itemToTrash = deletedItem ?? state.items.find((i) => i.id === id);
+      if (!itemToTrash) return state;
+
+      // Soft Delete
+      return {
+        items: state.items.filter((i) => i.id !== id),
+        trash: [...state.trash, { ...itemToTrash, in_trash: true }],
+      };
+    });
+  },
+
+  // --- Trash Mutators ---
+  restoreItem: (item): void => {
+    set((state) => ({
+      items: [...state.items.filter((i) => i.id !== item.id), item],
+      trash: state.trash.filter((i) => i.id !== item.id),
+    }));
+  },
+
+  deleteItemPermanently: (id): void => {
+    set((state) => ({
+      trash: state.trash.filter((i) => i.id !== id),
+    }));
+  },
+
+  emptyTrash: (): void => {
+    set(() => ({
+      trash: [],
     }));
   },
 }));

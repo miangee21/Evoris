@@ -9,10 +9,7 @@ import {
 } from "lucide-react";
 import { useSessionStore } from "@/features/vault-session/store/session.store";
 import { sortByName } from "@/shared/lib/sort";
-import {
-  CATEGORY_ICONS,
-  FALLBACK_ICON,
-} from "@/features/categories/constants/category-icons";
+import { getCategoryIcon } from "@/features/categories/lib/category-display";
 import {
   Select,
   SelectContent,
@@ -108,13 +105,15 @@ export function ItemCategoryFilter({
         }}
       >
         <Tooltip>
-          <TooltipTrigger>
-            <SelectTrigger
-              className="flex size-9 shrink-0 items-center justify-center rounded-md border border-transparent bg-accent p-0 text-accent-foreground shadow-sm transition-colors hover:bg-accent/80 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring [&>svg:last-child]:hidden"
-              aria-label="Filter by category"
-            >
-              <ListFilterIcon className="size-4" />
-            </SelectTrigger>
+          <TooltipTrigger
+            render={
+              <SelectTrigger
+                className="flex size-9 shrink-0 items-center justify-center rounded-md border border-transparent bg-accent p-0 text-accent-foreground shadow-sm transition-colors hover:bg-accent/80 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring [&>svg:last-child]:hidden"
+                aria-label="Filter by category"
+              />
+            }
+          >
+            <ListFilterIcon className="size-4" />
           </TooltipTrigger>
 
           <TooltipContent side="top" sideOffset={6}>
@@ -183,8 +182,7 @@ export function ItemCategoryFilter({
           )}
 
           {sortedCategories.map((category) => {
-            const IconComponent =
-              CATEGORY_ICONS[category.icon] ?? FALLBACK_ICON;
+            const IconComponent = getCategoryIcon(category.icon);
 
             return (
               <SelectItem

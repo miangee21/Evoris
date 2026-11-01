@@ -8,7 +8,7 @@ use tauri::State;
 #[tauri::command]
 pub fn get_settings(state: State<'_, AppState>) -> Result<serde_json::Value, VaultError> {
     // 1. Lock the active session to safely read from memory
-    let session_guard = state.session.lock().unwrap();
+    let session_guard = crate::state::lock_guard(&state.session)?;
 
     // 2. If a vault is currently unlocked, extract its specific settings
     if let Some(session) = session_guard.as_ref() {
@@ -31,8 +31,8 @@ pub fn update_settings(
         serde_json::from_value(settings).map_err(|_| VaultError::NotAnEvorisFile)?;
 
     // 2. Lock session (RAM) and active_path (Disk Path) safely
-    let mut session_guard = state.session.lock().unwrap();
-    let path_guard = state.active_path.lock().unwrap();
+    let mut session_guard = crate::state::lock_guard(&state.session)?;
+    let path_guard = crate::state::lock_guard(&state.active_path)?;
 
     // 3. If everything is successfully unlocked, overwrite and encrypt!
     if let (Some(session), Some(path)) = (session_guard.as_mut(), path_guard.as_ref()) {

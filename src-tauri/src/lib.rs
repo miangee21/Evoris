@@ -19,6 +19,7 @@ pub mod vault;
 pub fn run() {
     tauri::Builder::default()
         .manage(state::AppState::default())
+        .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_clipboard_manager::init())

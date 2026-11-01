@@ -1,5 +1,6 @@
 //src/features/items/components/items-page.tsx
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
 import { PlusIcon } from "lucide-react";
 import { PageContainer } from "@/shared/components/page-container";
 import { PageHeader } from "@/shared/components/page-header";
@@ -10,6 +11,7 @@ import { ItemGrid } from "./item-grid";
 import { ItemEmptyState } from "./item-empty-state";
 
 export function ItemsPage(): React.JSX.Element {
+  const navigate = useNavigate();
   const {
     filteredItems,
     totalItems,
@@ -20,10 +22,7 @@ export function ItemsPage(): React.JSX.Element {
   } = useItemSearch();
 
   const handleCreateNew = (): void => {
-    // Phase 12 mein hum yahan routing lagayenge (e.g. navigate("/vault/new"))
-    alert(
-      "Next Step: Yahan se hum Naya Item create karne wale page par jayenge!",
-    );
+    void navigate("/vault/new");
   };
 
   return (

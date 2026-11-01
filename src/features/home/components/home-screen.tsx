@@ -13,6 +13,7 @@ import { HomeActionCard } from "./home-action-card";
 import { HomeSettingsDialog } from "./home-settings-dialog";
 import { CreateVaultDialog } from "./create-vault-dialog";
 import { OpenVaultDialog } from "./open-vault-dialog";
+import { ImportVaultDialog } from "./import-vault-dialog";
 
 export function HomeScreen(): React.JSX.Element {
   const [version, setVersion] = useState<string>("...");
@@ -22,6 +23,7 @@ export function HomeScreen(): React.JSX.Element {
     null,
   );
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isImportOpen, setIsImportOpen] = useState(false);
 
   const handleOpenVaultClick = async (): Promise<void> => {
     try {
@@ -120,7 +122,7 @@ export function HomeScreen(): React.JSX.Element {
             title="Import a Vault"
             description="Restore your vault from an external Evoris export."
             onClick={(): void => {
-              console.warn("TODO: Import Vault - Next Step");
+              setIsImportOpen(true);
             }}
           />
         </div>
@@ -151,6 +153,12 @@ export function HomeScreen(): React.JSX.Element {
         isOpen={isSettingsOpen}
         onClose={(): void => {
           setIsSettingsOpen(false);
+        }}
+      />
+      <ImportVaultDialog
+        isOpen={isImportOpen}
+        onClose={(): void => {
+          setIsImportOpen(false);
         }}
       />
     </div>

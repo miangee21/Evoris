@@ -1,13 +1,12 @@
 ﻿//src-tauri/src/vault/validate.rs
 use crate::error::VaultError;
-use crate::vault::model::{FieldType, VaultData};
-use base32::Alphabet;
+use crate::vault::model::VaultData;
 use std::collections::HashSet;
 
 /// Performs semantic validation on the vault data structure
 ///
 /// # Errors
-/// Returns `VaultError::CorruptedVault` if data fails semantic rules (e.g., missing IDs, invalid TOTP).
+/// Returns `VaultError::CorruptedVault` if data fails semantic rules (e.g., missing IDs).
 pub fn validate_vault(data: &VaultData) -> Result<(), VaultError> {
     let mut cat_ids = HashSet::new();
 
@@ -46,23 +45,14 @@ pub fn validate_vault(data: &VaultData) -> Result<(), VaultError> {
                     "Duplicate field ID within item".into(),
                 ));
             }
+        }
 
-            // Validate TOTP Base32 secret strictly
-            if field.r#type == FieldType::Totp {
-                let secret = field.value.trim().replace(' ', ""); // Handle spaces
-                if secret.is_empty() {
-                    return Err(VaultError::CorruptedVault("Empty TOTP secret".into()));
-                }
-
-                // Base32 can be RFC4648 with or without padding
-                let decoded_no_pad = base32::decode(Alphabet::Rfc4648 { padding: false }, &secret);
-                let decoded_pad = base32::decode(Alphabet::Rfc4648 { padding: true }, &secret);
-
-                if decoded_no_pad.is_none() && decoded_pad.is_none() {
-                    return Err(VaultError::CorruptedVault(
-                        "Invalid Base32 string in TOTP field".into(),
-                    ));
-                }
+        let mut attachment_ids = HashSet::new();
+        for attachment in &item.attachments {
+            if !attachment_ids.insert(&attachment.id) {
+                return Err(VaultError::CorruptedVault(
+                    "Duplicate attachment ID within item".into(),
+                ));
             }
         }
     }

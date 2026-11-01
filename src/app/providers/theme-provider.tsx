@@ -7,7 +7,6 @@ export function ThemeProvider({
 }: {
   children: React.ReactNode;
 }): React.JSX.Element {
-  // Use our new global theme motor instead of the vault session
   const theme = useThemeStore((s) => s.theme);
   const accent = useThemeStore((s) => s.accent);
 

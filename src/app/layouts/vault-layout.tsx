@@ -6,8 +6,12 @@ import { TopBar } from "@/features/navigation/components/top-bar";
 import { BottomDock } from "@/features/navigation/components/bottom-dock";
 import { TooltipProvider } from "@/shared/components/ui/tooltip";
 import { useThemeStore } from "@/features/theme/store/theme.store";
+import { useAutolock } from "@/features/autolock/hooks/use-autolock";
 
 export function VaultLayout(): React.JSX.Element {
+  // Mounted once here so idle locking applies to every vault screen.
+  useAutolock();
+
   const { theme, setTheme, isPullCordEnabled } = useThemeStore();
 
   const toggleTheme = (): void => {
@@ -32,10 +36,7 @@ export function VaultLayout(): React.JSX.Element {
           />
         )}
         <TopBar />
-        {/* 
-          Main content area. 
-          pt-[var(--topbar-height,3.5rem)] ensures content doesn't hide under the fixed TopBar. 
-        */}
+        {/* Main content area */}
         <main className="flex-1 pt-(--topbar-height,3.5rem)">
           <Outlet />
         </main>

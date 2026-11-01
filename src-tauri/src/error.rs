@@ -21,6 +21,8 @@ pub enum VaultError {
     CryptoError(#[from] CryptoError),
     #[error("Failed to parse vault data: {0}")]
     ParseError(#[from] serde_json::Error),
+    #[error("Internal state error")]
+    InternalError,
 }
 
 impl Serialize for VaultError {
@@ -42,6 +44,7 @@ impl Serialize for VaultError {
             VaultError::IoError(_) => "IO_ERROR",
             VaultError::CryptoError(_) => "CRYPTO_ERROR",
             VaultError::ParseError(_) => "PARSE_ERROR",
+            VaultError::InternalError => "INTERNAL_ERROR",
         };
 
         state.serialize_field("code", code)?;

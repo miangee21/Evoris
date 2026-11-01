@@ -11,6 +11,9 @@ import { UnlockScreen } from "@/features/vault-session/components/unlock-screen"
 import { SettingsPage } from "@/features/settings/components/settings-page";
 import { CategoriesPage } from "@/features/categories/components/categories-page";
 import { ItemsPage } from "@/features/items/components/items-page";
+import { ItemCreatePage } from "@/features/items/components/item-create-page";
+import { ItemDetailPage } from "@/features/items/components/item-detail-page";
+import { TrashPage } from "@/features/trash/components/trash-page";
 
 export const router = createHashRouter([
   {
@@ -33,10 +36,10 @@ export const router = createHashRouter([
         element: <VaultLayout />,
         children: [
           { path: ROUTE_PATHS.VAULT, element: <ItemsPage /> },
-          { path: ROUTE_PATHS.VAULT_NEW, element: <div>Create Item</div> },
-          { path: ROUTE_PATHS.VAULT_DETAIL, element: <div>Item Detail</div> },
+          { path: ROUTE_PATHS.VAULT_NEW, element: <ItemCreatePage /> },
+          { path: ROUTE_PATHS.VAULT_DETAIL, element: <ItemDetailPage /> },
           { path: ROUTE_PATHS.CATEGORIES, element: <CategoriesPage /> },
-          { path: ROUTE_PATHS.TRASH, element: <div>Trash</div> },
+          { path: ROUTE_PATHS.TRASH, element: <TrashPage /> },
           { path: ROUTE_PATHS.SETTINGS, element: <SettingsPage /> },
         ],
       },

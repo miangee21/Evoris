@@ -12,11 +12,11 @@
     "fs:allow-exists",
     "clipboard-manager:allow-write-text",
     "clipboard-manager:allow-clear",
+    "shell:allow-open",
     {
       "identifier": "opener:allow-open-url",
       "allow": [
-        { "url": "https://github.com/*" },
-        { "url": "https://discord.com/*" }
+        { "url": "https://github.com/*" }
       ]
     },
     "os:allow-platform"

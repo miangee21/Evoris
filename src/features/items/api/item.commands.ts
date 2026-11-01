@@ -1,37 +1,25 @@
 //src/features/items/api/item.commands.ts
-import { invoke } from "@tauri-apps/api/core";
+import { invokeCommand } from "@/shared/lib/invoke";
+import { itemSchema } from "@/shared/schemas/vault.schema";
 import type { Item } from "@/shared/types/vault.types";
+import type { Result } from "@/shared/lib/result";
+import type { EvorisError } from "@/shared/lib/errors";
 
-// Standard command result pattern
-export type ItemCmdResult<T> =
-  | { ok: true; value: T }
-  | { ok: false; error: string };
-
-export async function createItemCmd(item: Item): Promise<ItemCmdResult<Item>> {
-  try {
-    const result = await invoke<Item>("create_item", { item });
-    return { ok: true, value: result };
-  } catch (error) {
-    return { ok: false, error: String(error) };
-  }
+export async function createItemCmd(
+  item: Item,
+): Promise<Result<Item, EvorisError>> {
+  return await invokeCommand("create_item", { item }, itemSchema);
 }
 
-export async function updateItemCmd(item: Item): Promise<ItemCmdResult<Item>> {
-  try {
-    const result = await invoke<Item>("update_item", { item });
-    return { ok: true, value: result };
-  } catch (error) {
-    return { ok: false, error: String(error) };
-  }
+export async function updateItemCmd(
+  item: Item,
+): Promise<Result<Item, EvorisError>> {
+  return await invokeCommand("update_item", { item }, itemSchema);
 }
 
 export async function deleteItemCmd(
   id: string,
-): Promise<ItemCmdResult<boolean>> {
-  try {
-    await invoke("delete_item", { id });
-    return { ok: true, value: true };
-  } catch (error) {
-    return { ok: false, error: String(error) };
-  }
+): Promise<Result<Item, EvorisError>> {
+  // Rust delete_item returns the updated (trashed) item, including deleted_at.
+  return await invokeCommand("delete_item", { id }, itemSchema);
 }

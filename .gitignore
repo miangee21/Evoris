@@ -8,6 +8,12 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+
+# Vaults and exports — never commit real user data
+*.evs
+*-export-*.json
+.env
+.env.*
 dist
 dist-ssr
 *.local

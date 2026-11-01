@@ -1,4 +1,4 @@
-﻿//src/shared/lib/invoke.ts
+//src/shared/lib/invoke.ts
 import { invoke } from "@tauri-apps/api/core";
 import type { ZodType } from "zod";
 import { ok, err, type Result } from "./result";
@@ -31,6 +31,54 @@ export type CommandName =
   | "read_import_file"
   | "create_vault_from_import";
 
+function extractErrorCode(error: unknown): string | undefined {
+  if (typeof error === "string") {
+    const trimmed = error.trim();
+    if (trimmed === "") {
+      return undefined;
+    }
+    // A JSON string is either an object with a `code` field or a
+    // JSON-encoded plain code string (e.g. '"CORRUPTED_VAULT"').
+    if (trimmed.startsWith("{")) {
+      try {
+        const parsed: unknown = JSON.parse(trimmed);
+        if (parsed !== null && typeof parsed === "object" && "code" in parsed) {
+          const code = parsed.code;
+          if (typeof code === "string") {
+            return code;
+          }
+        }
+      } catch {
+        // Malformed JSON: fall through and keep the raw string below.
+      }
+      return trimmed;
+    }
+    if (trimmed.startsWith('"')) {
+      try {
+        const parsed: unknown = JSON.parse(trimmed);
+        if (typeof parsed === "string" && parsed !== "") {
+          return parsed;
+        }
+      } catch {
+        // Malformed JSON: fall through and keep the raw string below.
+      }
+    }
+    return trimmed;
+  }
+  if (error instanceof Error) {
+    // An Error's message may itself be a code or a JSON error string.
+    return extractErrorCode(error.message);
+  }
+  if (error !== null && typeof error === "object" && "code" in error) {
+    const code = error.code;
+    if (typeof code === "string" && code !== "") {
+      return code;
+    }
+    return undefined;
+  }
+  return undefined;
+}
+
 export async function invokeCommand<TResult>(
   command: CommandName,
   payload: Record<string, unknown> | undefined,
@@ -47,18 +95,13 @@ export async function invokeCommand<TResult>(
 
     return ok(parsed.data);
   } catch (error) {
-    // Tauri often throws direct strings for Rust enum errors
-    if (typeof error === "string") {
-      return err(error as EvorisError);
-    }
-    // Fallback if the error was serialized as an object
-    if (error !== null && typeof error === "object" && "code" in error) {
-      const typedError = error as { code: string };
-      if (typeof typedError.code === "string") {
-        return err(typedError.code as EvorisError);
-      }
-    }
+    // Always log the full raw error so a user can paste it if the
+    // mapped toast still does not explain the failure.
     console.error(`[Invoke Error in ${command}]`, error);
+    const code = extractErrorCode(error);
+    if (code !== undefined) {
+      return err(code as EvorisError);
+    }
     return err("UNKNOWN");
   }
 }

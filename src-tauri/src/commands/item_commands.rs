@@ -1,4 +1,4 @@
-﻿//src-tauri/src/commands/item_commands.rs
+//src-tauri/src/commands/item_commands.rs
 use crate::commands::now;
 use crate::error::VaultError;
 use crate::state::AppState;
@@ -7,7 +7,7 @@ use tauri::State;
 
 #[tauri::command]
 pub fn list_items(state: State<'_, AppState>) -> Result<Vec<VaultItem>, VaultError> {
-    let session_guard = state.session.lock().unwrap();
+    let session_guard = crate::state::lock_guard(&state.session)?;
     let session = session_guard.as_ref().ok_or(VaultError::VaultLocked)?;
     // Return only active items (not in trash)
     Ok(session
@@ -24,14 +24,21 @@ pub fn create_item(
     state: State<'_, AppState>,
     mut item: VaultItem,
 ) -> Result<VaultItem, VaultError> {
-    let mut session_guard = state.session.lock().unwrap();
+    let mut session_guard = crate::state::lock_guard(&state.session)?;
     let session = session_guard.as_mut().ok_or(VaultError::VaultLocked)?;
-    let path_guard = state.active_path.lock().unwrap();
+    let path_guard = crate::state::lock_guard(&state.active_path)?;
     let path = path_guard.as_ref().ok_or(VaultError::VaultLocked)?;
 
     item.created_at = now().to_string();
     item.updated_at.clone_from(&item.created_at);
     item.in_trash = false;
+    // Same convention as the item timestamps: the frontend sends "" and
+    // Rust fills it, so the frontend never invents a timestamp format.
+    for attachment in &mut item.attachments {
+        if attachment.created_at.is_empty() {
+            attachment.created_at.clone_from(&item.created_at);
+        }
+    }
 
     session.data.items.push(item.clone());
 
@@ -54,12 +61,19 @@ pub fn update_item(
     state: State<'_, AppState>,
     mut item: VaultItem,
 ) -> Result<VaultItem, VaultError> {
-    let mut session_guard = state.session.lock().unwrap();
+    let mut session_guard = crate::state::lock_guard(&state.session)?;
     let session = session_guard.as_mut().ok_or(VaultError::VaultLocked)?;
-    let path_guard = state.active_path.lock().unwrap();
+    let path_guard = crate::state::lock_guard(&state.active_path)?;
     let path = path_guard.as_ref().ok_or(VaultError::VaultLocked)?;
 
     item.updated_at = now().to_string();
+    // New attachments added by this edit arrive with "" and get the
+    // update timestamp; existing ones keep their original created_at.
+    for attachment in &mut item.attachments {
+        if attachment.created_at.is_empty() {
+            attachment.created_at.clone_from(&item.updated_at);
+        }
+    }
 
     let item_index = session
         .data
@@ -86,10 +100,10 @@ pub fn update_item(
 }
 
 #[tauri::command]
-pub fn delete_item(state: State<'_, AppState>, id: String) -> Result<(), VaultError> {
-    let mut session_guard = state.session.lock().unwrap();
+pub fn delete_item(state: State<'_, AppState>, id: String) -> Result<VaultItem, VaultError> {
+    let mut session_guard = crate::state::lock_guard(&state.session)?;
     let session = session_guard.as_mut().ok_or(VaultError::VaultLocked)?;
-    let path_guard = state.active_path.lock().unwrap();
+    let path_guard = crate::state::lock_guard(&state.active_path)?;
     let path = path_guard.as_ref().ok_or(VaultError::VaultLocked)?;
 
     let item_index = session
@@ -100,11 +114,14 @@ pub fn delete_item(state: State<'_, AppState>, id: String) -> Result<(), VaultEr
         .ok_or_else(|| VaultError::CorruptedVault("Item not found".into()))?;
 
     let backup_trash_state = session.data.items[item_index].in_trash;
+    let backup_deleted_at = session.data.items[item_index].deleted_at.clone();
     let backup_updated_at = session.data.items[item_index].updated_at.clone();
 
     // Move to trash (Soft Delete)
+    let timestamp = now().to_string();
     session.data.items[item_index].in_trash = true;
-    session.data.items[item_index].updated_at = now().to_string();
+    session.data.items[item_index].deleted_at = Some(timestamp.clone());
+    session.data.items[item_index].updated_at = timestamp;
 
     let save_result = (|| -> Result<(), VaultError> {
         crate::vault::validate::validate_vault(&session.data)?;
@@ -114,9 +131,12 @@ pub fn delete_item(state: State<'_, AppState>, id: String) -> Result<(), VaultEr
 
     if let Err(e) = save_result {
         session.data.items[item_index].in_trash = backup_trash_state;
+        session.data.items[item_index].deleted_at = backup_deleted_at;
         session.data.items[item_index].updated_at = backup_updated_at;
         return Err(e);
     }
 
-    Ok(())
+    // Return the updated item so the frontend trash entry carries the
+    // exact deleted_at timestamp Rust set (frontend must not invent one).
+    Ok(session.data.items[item_index].clone())
 }

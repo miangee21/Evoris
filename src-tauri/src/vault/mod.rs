@@ -77,8 +77,9 @@ pub fn create_vault(
     let data = VaultData {
         version: u32::from(format::FORMAT_VERSION),
         settings: model::VaultConfig {
-            lock_timeout_minutes: 1,
             navigation_mode: String::from("top-bar-only"),
+            auto_lock_enabled: true,
+            lock_timeout_seconds: 30,
         },
         categories: vec![],
         items: vec![],
@@ -179,8 +180,9 @@ mod tests {
         let mut data = VaultData {
             version: u32::from(format::FORMAT_VERSION),
             settings: model::VaultConfig {
-                lock_timeout_minutes: 1,
                 navigation_mode: "both".to_string(),
+                auto_lock_enabled: true,
+                lock_timeout_seconds: 30,
             },
             categories: vec![],
             items: vec![],
@@ -193,10 +195,12 @@ mod tests {
             name: "Test".into(),
             fields: vec![],
             totp: None,
+            attachments: vec![],
             created_at: "1970-01-01T00:00:00Z".to_string(),
             updated_at: "1970-01-01T00:00:00Z".to_string(),
             is_favorite: false,
             in_trash: false,
+            deleted_at: None,
         });
 
         let err = validate::validate_vault(&data).unwrap_err();

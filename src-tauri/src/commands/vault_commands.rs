@@ -28,12 +28,12 @@ pub fn create_vault(
     let path_buf = PathBuf::from(&path);
     let (data, key, salt) = crate::vault::create_vault(&path_buf, password)?;
 
-    *state.session.lock().unwrap() = Some(VaultSession {
+    *crate::state::lock_guard(&state.session)? = Some(VaultSession {
         data: data.clone(),
         key,
         salt,
     });
-    *state.active_path.lock().unwrap() = Some(path_buf);
+    *crate::state::lock_guard(&state.active_path)? = Some(path_buf);
     Ok(data)
 }
 
@@ -46,25 +46,25 @@ pub fn open_vault(
     let path_buf = PathBuf::from(&path);
     let (data, key, salt) = crate::vault::open_vault(&path_buf, password)?;
 
-    *state.session.lock().unwrap() = Some(VaultSession {
+    *crate::state::lock_guard(&state.session)? = Some(VaultSession {
         data: data.clone(),
         key,
         salt,
     });
-    *state.active_path.lock().unwrap() = Some(path_buf);
+    *crate::state::lock_guard(&state.active_path)? = Some(path_buf);
     Ok(data)
 }
 
 #[tauri::command]
 pub fn lock_vault(state: State<'_, AppState>) -> Result<(), VaultError> {
     // Dropping the session automatically zeroizes the key in memory!
-    *state.session.lock().unwrap() = None;
+    *crate::state::lock_guard(&state.session)? = None;
     Ok(())
 }
 
 #[tauri::command]
 pub fn unlock_vault(state: State<'_, AppState>, password: &str) -> Result<VaultData, VaultError> {
-    let path_guard = state.active_path.lock().unwrap();
+    let path_guard = crate::state::lock_guard(&state.active_path)?;
     let path = path_guard
         .as_ref()
         .ok_or_else(|| VaultError::CorruptedVault("No active path".into()))?
@@ -72,7 +72,7 @@ pub fn unlock_vault(state: State<'_, AppState>, password: &str) -> Result<VaultD
     drop(path_guard); // Release lock before opening
 
     let (data, key, salt) = crate::vault::open_vault(&path, password)?;
-    *state.session.lock().unwrap() = Some(VaultSession {
+    *crate::state::lock_guard(&state.session)? = Some(VaultSession {
         data: data.clone(),
         key,
         salt,
@@ -82,15 +82,15 @@ pub fn unlock_vault(state: State<'_, AppState>, password: &str) -> Result<VaultD
 
 #[tauri::command]
 pub fn close_vault(state: State<'_, AppState>) -> Result<(), VaultError> {
-    *state.session.lock().unwrap() = None;
-    *state.active_path.lock().unwrap() = None; // Clears remembered path (back to home)
+    *crate::state::lock_guard(&state.session)? = None;
+    *crate::state::lock_guard(&state.active_path)? = None; // Clears remembered path (back to home)
     Ok(())
 }
 
 #[tauri::command]
 pub fn get_vault_state(state: State<'_, AppState>) -> Result<VaultStateResponse, VaultError> {
-    let is_unlocked = state.session.lock().unwrap().is_some();
-    let path_guard = state.active_path.lock().unwrap();
+    let is_unlocked = crate::state::lock_guard(&state.session)?.is_some();
+    let path_guard = crate::state::lock_guard(&state.active_path)?;
 
     let file_name = path_guard
         .as_ref()
@@ -111,7 +111,7 @@ pub fn change_master_password(
     old_password: &str,
     new_password: &str,
 ) -> Result<(), VaultError> {
-    let path_guard = state.active_path.lock().unwrap();
+    let path_guard = crate::state::lock_guard(&state.active_path)?;
     let path = path_guard.as_ref().ok_or(VaultError::VaultLocked)?.clone();
     drop(path_guard); // Free lock for UI responsiveness
 
@@ -154,7 +154,7 @@ pub fn change_master_password(
     );
 
     // Update active session with new keys
-    *state.session.lock().unwrap() = Some(VaultSession {
+    *crate::state::lock_guard(&state.session)? = Some(VaultSession {
         data,
         key: new_key,
         salt: new_salt,

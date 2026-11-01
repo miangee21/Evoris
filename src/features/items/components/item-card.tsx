@@ -4,9 +4,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { ShieldCheckIcon, FolderOpen } from "lucide-react";
 import { useSessionStore } from "@/features/vault-session/store/session.store";
 import {
-  CATEGORY_ICONS,
-  FALLBACK_ICON,
-} from "@/features/categories/constants/category-icons";
+  categoryBadgeStyle,
+  getCategoryIcon,
+} from "@/features/categories/lib/category-display";
+import { useConfirmStore } from "@/shared/hooks/use-confirm";
+import { useItemMutations } from "../hooks/use-item-mutations";
 import type { Item } from "@/shared/types/vault.types";
 
 interface ItemCardProps {
@@ -17,13 +19,26 @@ export function ItemCard({ item }: ItemCardProps): React.JSX.Element {
   const categories = useSessionStore((state) => state.categories);
   const category = categories.find((c) => c.id === item.category_id);
   const navigate = useNavigate();
+  const openConfirm = useConfirmStore((state) => state.openConfirm);
+  const { deleteItem } = useItemMutations();
 
-  const IconComponent = category
-    ? (CATEGORY_ICONS[category.icon] ?? FALLBACK_ICON)
-    : FolderOpen;
+  const handleDelete = (e: React.MouseEvent): void => {
+    e.preventDefault();
+    openConfirm({
+      title: "Move to Trash?",
+      description: `Are you sure you want to move "${item.name}" to the trash? You can restore it later.`,
+      confirmLabel: "Move to Trash",
+      cancelLabel: "Cancel",
+      variant: "destructive",
+      // The mutation shows the success/error toast itself.
+      onConfirm: async (): Promise<void> => {
+        await deleteItem(item.id);
+      },
+    });
+  };
 
-  const catColor = category ? category.color : "var(--color-primary)";
-  const bgOpacity = `color-mix(in srgb, ${catColor} 12%, transparent)`;
+  const IconComponent = category ? getCategoryIcon(category.icon) : FolderOpen;
+  const badgeStyle = categoryBadgeStyle(category?.color);
 
   return (
     <Link
@@ -34,7 +49,7 @@ export function ItemCard({ item }: ItemCardProps): React.JSX.Element {
       <div className="flex items-start justify-between">
         <div
           className="flex size-12 items-center justify-center rounded-2xl transition-colors"
-          style={{ backgroundColor: bgOpacity, color: catColor }}
+          style={badgeStyle}
         >
           <IconComponent className="size-6" />
         </div>
@@ -47,7 +62,7 @@ export function ItemCard({ item }: ItemCardProps): React.JSX.Element {
           )}
           <span
             className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
-            style={{ backgroundColor: bgOpacity, color: catColor }}
+            style={badgeStyle}
           >
             {category ? category.name : "Uncategorized"}
           </span>
@@ -102,10 +117,7 @@ export function ItemCard({ item }: ItemCardProps): React.JSX.Element {
             type="button"
             className="p-1 text-muted-foreground transition-colors hover:text-destructive"
             title="Delete"
-            onClick={(e) => {
-              e.preventDefault();
-              alert("Delete step 13 mein aayega");
-            }}
+            onClick={handleDelete}
           >
             <svg
               className="size-4"

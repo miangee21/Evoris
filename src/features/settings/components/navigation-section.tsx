@@ -1,30 +1,19 @@
 //src/features/settings/components/navigation-section.tsx
 import { PanelBottomIcon, CheckIcon, InfoIcon } from "lucide-react";
 import { useVaultSettings } from "../hooks/use-vault-settings";
+import { SettingsSection } from "./settings-section";
 import { cn } from "@/shared/lib/utils";
 
 export function NavigationSection(): React.JSX.Element {
   const { navigationMode, updateNavigationMode } = useVaultSettings();
 
   return (
-    <section className="flex flex-col gap-4 rounded-xl p-5 sm:p-6 bg-card/40 border shadow-sm">
-      {/* Section Header */}
-      <div className="flex items-center justify-between pb-1">
-        <div>
-          <h2 className="text-base font-semibold tracking-tight text-foreground flex items-center gap-2">
-            <PanelBottomIcon className="size-5 text-primary" />
-            Navigation & Dock Layout
-          </h2>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Control visibility and placement of Top Bar and Floating Dock
-            navigation.
-          </p>
-        </div>
-        <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground px-2 py-0.5 rounded bg-muted/50 border font-medium">
-          Interface
-        </span>
-      </div>
-
+    <SettingsSection
+      title="Navigation & Dock Layout"
+      description="Control visibility and placement of Top Bar and Floating Dock navigation."
+      icon={<PanelBottomIcon className="size-5 text-primary" />}
+      badge="Interface"
+    >
       {/* Navigation Selection Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {/* Top Bar Only */}
@@ -149,6 +138,6 @@ export function NavigationSection(): React.JSX.Element {
           At least one navigation element must remain active for system access.
         </span>
       </div>
-    </section>
+    </SettingsSection>
   );
 }

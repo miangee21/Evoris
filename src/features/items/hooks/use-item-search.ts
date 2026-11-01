@@ -2,6 +2,7 @@
 import { useState, useMemo } from "react";
 import { useSessionStore } from "@/features/vault-session/store/session.store";
 import { useDebounce } from "@/shared/hooks/use-debounced-value";
+import { SEARCH_DEBOUNCE_MS } from "@/shared/constants/limits";
 import { sortByName } from "@/shared/lib/sort";
 import type { Item } from "@/shared/types/vault.types";
 
@@ -20,8 +21,8 @@ export function useItemSearch(): UseItemSearchResult {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("all");
 
-  // 300ms debounce
-  const debouncedQuery = useDebounce(searchQuery, 300);
+  // Shared debounce constant
+  const debouncedQuery = useDebounce(searchQuery, SEARCH_DEBOUNCE_MS);
 
   const filteredItems = useMemo(() => {
     // 1. Filter by Category

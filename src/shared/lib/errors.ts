@@ -21,6 +21,7 @@ export type EvorisError =
   | "NOT_AN_EVORIS_FILE"
   | "CORRUPTED_VAULT"
   | "VAULT_LOCKED"
+  | "INTERNAL_ERROR"
   | "UNKNOWN";
 
 interface ErrorDetail {
@@ -97,6 +98,10 @@ const ERROR_MESSAGES: Record<EvorisError, ErrorDetail> = {
   VAULT_LOCKED: {
     title: "Vault Locked",
     description: "The vault is currently locked. Please unlock it first.",
+  },
+  INTERNAL_ERROR: {
+    title: "Internal Error",
+    description: "An internal error occurred. Please try again.",
   },
   UNKNOWN: {
     title: "Unexpected Error",
