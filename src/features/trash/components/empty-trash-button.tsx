@@ -14,20 +14,22 @@ export function EmptyTrashButton({
   disabled,
   onClick,
 }: EmptyTrashButtonProps): React.JSX.Element {
+  const label =
+    trashCount > 0
+      ? `Empty trash (${String(trashCount)} items)`
+      : "Empty trash";
+
   return (
     <Button
       type="button"
       variant="destructive"
+      size="icon-lg"
       onClick={onClick}
       disabled={disabled}
-      aria-label={
-        trashCount > 0
-          ? `Empty trash (${String(trashCount)} items)`
-          : "Empty trash"
-      }
+      title={label}
+      aria-label={label}
     >
       <Trash2Icon className="size-4" />
-      Empty Trash
     </Button>
   );
 }
