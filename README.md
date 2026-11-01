@@ -26,8 +26,7 @@
     <a href="#-tech-stack">⚡ Tech Stack</a> ·
     <a href="#-building-from-source">🔨 Build</a> ·
     <a href="#-project-structure">🗂️ Structure</a> ·
-    <a href="#-contributing">🤝 Contribute</a> ·
-    <a href="https://github.com/miangee21/Evoris" target="_blank" rel="noopener noreferrer">🌐 GitHub</a>
+    <a href="#-contributing">🤝 Contribute</a>
   </p>
 
   <br />
@@ -766,3 +765,11 @@ furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 ```
+
+---
+
+<div align="center">
+  <p>
+    Built with ❤️ by <a href="https://github.com/miangee21" target="_blank" rel="noopener noreferrer"><strong>Muhammad Hassan</strong></a>
+  </p>
+</div>
