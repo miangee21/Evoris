@@ -38,6 +38,11 @@
     ],
     "licenseFile": "../LICENSE",
     "shortDescription": "Offline encrypted password manager",
-    "longDescription": "Evoris is a fully offline, encrypted, open-source password manager built with Tauri and React."
+    "longDescription": "Evoris is a fully offline, encrypted, open-source password manager built with Tauri and React.",
+    "windows": {
+      "nsis": {
+        "installerIcon": "icons/icon.ico"
+      }
+    }
   }
 }
